@@ -77,7 +77,7 @@ class DefaultHeaderDropdown extends Component {
     return (
       <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
         <DropdownToggle nav>
-          <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+          <img src={'../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
         </DropdownToggle>
         <DropdownMenu right>
           <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
@@ -151,7 +151,7 @@ class DefaultHeaderDropdown extends Component {
             <div className="message">
               <div className="pt-3 mr-3 float-left">
                 <div className="avatar">
-                  <img src={'assets/img/avatars/7.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                  <img src={'../assets/img/avatars/7.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
                   <span className="avatar-status badge-success"></span>
                 </div>
               </div>
@@ -168,7 +168,7 @@ class DefaultHeaderDropdown extends Component {
             <div className="message">
               <div className="pt-3 mr-3 float-left">
                 <div className="avatar">
-                  <img src={'assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                  <img src={'../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
                   <span className="avatar-status badge-warning"></span>
                 </div>
               </div>
@@ -185,7 +185,7 @@ class DefaultHeaderDropdown extends Component {
             <div className="message">
               <div className="pt-3 mr-3 float-left">
                 <div className="avatar">
-                  <img src={'assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                  <img src={'../assets/img/avatars/5.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
                   <span className="avatar-status badge-danger"></span>
                 </div>
               </div>
@@ -202,7 +202,7 @@ class DefaultHeaderDropdown extends Component {
             <div className="message">
               <div className="pt-3 mr-3 float-left">
                 <div className="avatar">
-                  <img src={'assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
+                  <img src={'../assets/img/avatars/4.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
                   <span className="avatar-status badge-info"></span>
                 </div>
               </div>
