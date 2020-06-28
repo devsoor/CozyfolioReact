@@ -6,7 +6,7 @@ const Message = React.lazy(() => import('./views/Apps/Email/Message'));
 const Dashboard = React.lazy(() => import('./components/Dashboard'));
 
 const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
-const Portfolio = React.lazy(() => import('./components/Career/Portfolio'));
+const Portfolio = React.lazy(() => import('./components/Career/Portfolio/Portfolio'));
 const Project = React.lazy(() => import('./components/Career/Project'));
 const Resume = React.lazy(() => import('./components/Career/Resume'));
 const Website = React.lazy(() => import('./components/Career/Website'));

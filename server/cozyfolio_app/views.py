@@ -184,12 +184,14 @@ def dashboard(request):
 #
 # Portfolio functions==========================================================================================
 #
-
+# Used for GET and POST methods
 class PortfolioList(generics.ListCreateAPIView):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
 
+# Used for GET, PUT, and DELETE methods
 class PortfolioDetail(generics.RetrieveUpdateDestroyAPIView):
+    print("views: PortfolioDetail ")
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
 

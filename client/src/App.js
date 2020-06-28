@@ -9,10 +9,11 @@ const loading = () => <div className="animated fadeIn pt-3 text-center"><div cla
 const DefaultLayout = React.lazy(() => import('./containers/DefaultLayout'));
 
 // Pages
-const Login = React.lazy(() => import('./views/Pages/Login'));
-const Register = React.lazy(() => import('./views/Pages/Register'));
-const Page404 = React.lazy(() => import('./views/Pages/Page404'));
-const Page500 = React.lazy(() => import('./views/Pages/Page500'));
+const Login = React.lazy(() => import('./components/Login/Login'));
+const Register = React.lazy(() => import('./components/Login/Register'));
+const Page404 = React.lazy(() => import('./components/Login/Page404'));
+const Page403 = React.lazy(() => import('./components/Login/Page403'));
+const Page500 = React.lazy(() => import('./components/Login/Page500'));
 
 const App = (props) => {
 

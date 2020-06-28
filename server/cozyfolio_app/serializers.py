@@ -26,4 +26,4 @@ urlpatterns = [
 class PortfolioSerializer(serializers.ModelSerializer):
   class Meta:
     model = Portfolio
-    fields = ('name', 'title', 'portfolioSummary', 'resume', 'created_at', 'updated_at')
+    fields = ('id', 'name', 'title', 'portfolioSummary', 'resume', 'created_at', 'updated_at')

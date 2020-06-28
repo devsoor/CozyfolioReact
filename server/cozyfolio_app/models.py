@@ -113,9 +113,6 @@ class User(models.Model):
     updated_at = models.DateField(auto_now=True)
     objects = UserManager()
 
-    def __repr__(self):
-        return f"User object: {self.id} {self.firstName} {self.lastName}"
-
 class Portfolio(models.Model):
     name = models.CharField(max_length=75)
     title = models.CharField(max_length=100, null=True)
@@ -124,6 +121,9 @@ class Portfolio(models.Model):
     created_at = models.DateField(default=datetime.now)
     updated_at = models.DateField(auto_now=True)
     user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
+
+    def __repr__(self):
+        return f"Portfolio object: {self.id} {self.name} {self.title}"
     
 class Project(models.Model):
     name = models.CharField(max_length=75)
