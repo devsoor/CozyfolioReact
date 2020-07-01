@@ -15,28 +15,31 @@ class UserManager(models.Manager):
         errors = {}
         NAME_REGEX = re.compile ('[a-zA-Z_]')
 
-        if NAME_REGEX.match(postData['registerFormFirstName']) == None or len(postData['registerFormFirstName']) < 2:
-            errors["registerFormFirstName"] = "First name must be all letters and length atleast 2 characters long"
+        # if NAME_REGEX.match(postData['registerFormFirstName']) == None or len(postData['registerFormFirstName']) < 2:
+        #     errors["registerFormFirstName"] = "First name must be all letters and length atleast 2 characters long"
 
-        if NAME_REGEX.match(postData['registerFormLastName']) == None or len(postData['registerFormLastName']) < 2:
-            errors["registerFormLastName"] = "Last name must be all letters and length atleast 2 characters long"
+        # if NAME_REGEX.match(postData['registerFormLastName']) == None or len(postData['registerFormLastName']) < 2:
+        #     errors["registerFormLastName"] = "Last name must be all letters and length atleast 2 characters long"
+
+        if NAME_REGEX.match(postData['username']) == None or len(postData['username']) < 2:
+            errors["username"] = "User name must be all letters and length atleast 2 characters long"
 
 
         EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['registerFormEmail']) or len(postData['registerFormEmail']) == 0:           
-            errors['registerFormEmail'] = "Invalid email address!"
+        if not EMAIL_REGEX.match(postData['email']) or len(postData['email']) == 0:           
+            errors['email'] = "Invalid email address!"
 
         # regular email uniqueness check
-        if User.objects.filter(email=postData['registerFormEmail']).exists():
+        if User.objects.filter(email=postData['email']).exists():
             errors['usertaken'] = "This user email already exists"
 
-        if len(postData['registerFormPassword']) < 8:
-            errors['registerFormPassword'] = "Password must be atleast 8 characters long"
+        if len(postData['password1']) < 8:
+            errors['password1'] = "Password must be atleast 8 characters long"
 
-        if len(postData['registerFormConfirmPassword']) < 8:
+        if len(postData['password2']) < 8:
             errors['confirmregisterFormConfirmPassword_pw'] = "Confirm Password must be atleast 8 characters long"
 
-        if postData['registerFormConfirmPassword'] != postData['registerFormConfirmPassword']:
+        if postData['password1'] != postData['password2']:
             errors['pw_match'] = "Passwords do not match"
 
         return errors
@@ -46,15 +49,18 @@ class UserManager(models.Manager):
             return
         errors = {}
         EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['loginFormEmail']) or len(postData['loginFormEmail']) == 0:           
-            errors['loginFormEmail'] = "Invalid email address!"
+        if not EMAIL_REGEX.match(postData['email']) or len(postData['username']) == 0:           
+            errors['username'] = "Invalid user name!"
 
-        current_emails = User.objects.filter(email=postData['loginFormEmail'])
-        if len(current_emails) == 0:
+        # if not EMAIL_REGEX.match(postData['email']) or len(postData['email']) == 0:           
+        #     errors['email'] = "Invalid email address!"
+
+        current_username = User.objects.filter(email=postData['username'])
+        if len(current_username) == 0:
                 errors['userunknown'] = "This user email does not exist"
 
-        if len(postData['loginFormPassword']) < 8:
-            errors['loginFormPassword'] = "Password must be atleast 8 characters long"
+        if len(postData['password']) < 8:
+            errors['password'] = "Password must be atleast 8 characters long"
 
         return errors
 
@@ -95,8 +101,9 @@ class PdfFile(models.Model):
     pdf = models.FileField(upload_to='media/')
 
 class User(models.Model):
-    firstName = models.CharField(max_length=75)
-    lastName = models.CharField(max_length=75)
+    # firstName = models.CharField(max_length=75)
+    # lastName = models.CharField(max_length=75)
+    username = models.CharField(max_length=75, null=True)
     email = models.CharField(max_length=50)
     password = models.CharField(max_length=255)
     address = models.CharField(max_length=100, null=True)

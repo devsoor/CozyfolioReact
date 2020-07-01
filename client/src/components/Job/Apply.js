@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React  from 'react';
 
 const Apply = (props) => {
     return (

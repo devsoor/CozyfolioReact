@@ -31,16 +31,28 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'cozyfolio_app',
-    'bootstrap4',
-    'rest_framework',
-    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'cozyfolio_app',
+    'bootstrap4',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.linkedin',
+    'allauth.socialaccount.providers.linkedin_oauth2',
+    'rest_framework_swagger',
+    'dj_rest_auth.registration',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +149,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_SESSION_LOGIN = True
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+SITE_ID = 1
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'auth'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+}
+
+SWAGGER_SETTINGS = {
+    'LOGIN_URL': 'login',
+    'LOGOUT_URL': 'logout',
+}
 
 CORS_ORIGIN_ALLOW_ALL = True
 

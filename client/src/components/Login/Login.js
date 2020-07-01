@@ -5,88 +5,106 @@ import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGr
 import axios from 'axios';
 
 const Login = () => {
-  const [state, setState] = useState({
-    isLoading: false,
-    loginFormEmail: "",
-    loginFormPassword: "",
-    errorMsg: null
-  });
-
-  const handleChange = (event) => {
-      setState({...state, [event.target.name]: event.target.value})
-  }
+  const [ resp, changeResponse ] = useState(null);
+  const [ username, changeUsername ] =  useState('');
+  const [ password, changePassword ] =  useState('');
+  const [ toDashboard, setToDashboard ] = useState(false);
 
   const loginSubmit = (event) => {
       event.preventDefault();
-      axios.defaults.xsrfCookieName = 'csrftoken'
-      axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-      const {loginFormEmail, loginFormPassword} = state;
-      axios.post('/login', {loginFormEmail, loginFormPassword})
-          .then(res => {
-              setState(res.data);
-              setState({...state, errorMsg:null});
-              return <Redirect  to="/dashboard" />
-          })
-          .catch(res => {
-              console.log("catch err = ", res.message)
-              setState({...state, errorMsg:"Invalid Login Attempt. Try again..."})
-          })
-      setState({isLoading: true});
+      return fetch('/dj-rest-auth/login/', {
+        method: 'POST',
+        credentials: 'omit',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body:  JSON.stringify({username, password})
+      }).then(resp => resp.json()).then(data => {
+        console.log("Login: fetch data = ", data)
+        data.access_token ? setToDashboard(true) : changeResponse(data)
+      }).catch(error => console.log('error ->', error))
   }
 
   return (
-    <div className="c-app c-default-layout flex-row align-items-center">
-      <Container>
-        <Row className="justify-content-center">
-          <Col md="8">
-            <CardGroup>
-              <Card className="p-4">
-                <CardBody>
-                  <Form onSubmit={loginSubmit}>
-                    <h1>Login</h1>
-                    <p className="text-muted">Sign In to your account</p>
-                    <InputGroup className="mb-3">
-                      <InputGroupAddon>
-                        <InputGroupText>
-                          <i className="icon-user"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="text" name="loginFormEmail" placeholder="Email" autoComplete="loginFormEmail" onChange={handleChange} />
-                    </InputGroup>
-                    <InputGroup className="mb-4">
-                      <InputGroupAddon>
-                        <InputGroupText>
-                        <i className="icon-lock"></i>
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input type="password" name="loginFormPassword" placeholder="Password" autoComplete="loginFormPassword" />
-                    </InputGroup>
-                    <Row>
-                      <Col xs="6">
-                        <Button color="primary" className="px-4">Login</Button>
-                      </Col>
-                      <Col xs="6" className="text-right">
-                        <Button color="link" className="px-0">Forgot password?</Button>
-                      </Col>
-                    </Row>
-                  </Form>
-                </CardBody>
-              </Card>
-              <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                <CardBody className="text-center">
-                  <div>
-                    <h2>Sign up</h2>
-                    <p>Need an account?</p>
-                    <Link to="/register">
-                      <Button color="info" className="mt-3" active tabIndex={-1}>Register Now!</Button>
-                    </Link>
-                  </div>
-                </CardBody>
-              </Card>
-            </CardGroup>
-          </Col>
-        </Row>
-      </Container>
+    <div>
+      {
+        toDashboard && <Redirect to="/dashboard"/>
+      }
+      <div className="app flex-row align-items-center">
+        <Container>
+          <Row className="justify-content-center">
+            <Col md="8">
+              <CardGroup>
+                <Card className="p-4">
+                  <CardBody>
+                    <Form onSubmit={loginSubmit}>
+                      <h1>Login</h1>
+                      <p className="text-muted">Sign In to your account</p>
+                      <InputGroup className="mb-3">
+                        <InputGroupAddon>
+                          <InputGroupText>
+                            <i className="icon-user"></i>
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <Input
+                        onChange={(e) => changeUsername(e.target.value)}
+                        value={username}
+                        type='input'
+                        name='username'
+                        autoComplete="username"
+                        placeholder="Username"/>  
+                      </InputGroup>
+                      <InputGroup className="mb-4">
+                        <InputGroupAddon>
+                          <InputGroupText>
+                          <i className="icon-lock"></i>
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <Input
+                          onChange={(e) => changePassword(e.target.value)}
+                          value={password}
+                          type='password'
+                          name='password'
+                          autoComplete="password"
+                          placeholder="Enter password"/>   
+                      </InputGroup>
+                      <Row>
+                        <Col xs="6">
+                          <Button color="primary" className="px-4">Login</Button>
+                        </Col>
+                        <Col xs="6" className="text-right">
+                          <Button color="link" className="px-0">Forgot password?</Button>
+                        </Col>
+                      </Row>
+                      <Row className="p-2">
+                        {resp &&
+                          <div className={'response'}>
+                            <code>
+                              <strong>{JSON.stringify(Object.values(resp)[0][0])}</strong>
+                            </code>
+                          </div>
+                        }
+                      </Row>
+                    </Form>
+                  </CardBody>
+                </Card>
+                <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
+                  <CardBody className="text-center">
+                    <div>
+                      <h2>Sign up</h2>
+                      <p>Need an account?</p>
+                      <Link to="/register">
+                        <Button color="info" className="mt-3" active tabIndex={-1}>Register Now!</Button>
+                      </Link>
+                    </div>
+                  </CardBody>
+                </Card>
+              </CardGroup>
+            </Col>
+          </Row>
+        </Container>
+      </div>
     </div>
   )
 }

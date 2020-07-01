@@ -26,8 +26,6 @@ const PortfolioForm = (props) => {
     const [pfolio, setPfolio] = useState(props.portfolio);
 
     const handleChange = (e) => {
-        console.log("PortfolioForm:handleChange, e.target.name = ", e.target.name)
-        console.log("PortfolioForm:handleChange, e.target.value = ", e.target.value)
         setPfolio({...pfolio, [e.target.name]: e.target.value});
         // props.onValueChange(id, e.target.name, e.target.value);
     }

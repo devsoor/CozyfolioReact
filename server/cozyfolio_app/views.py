@@ -4,6 +4,7 @@ from .serializers import PortfolioSerializer
 from .forms import LanguagesForm, FrameworksForm, DatabasesForm, CloudsForm, PDFForm
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
+from django.http import HttpResponse
 import bcrypt
 from datetime import date, datetime, timezone, timedelta
 import pytz
@@ -34,11 +35,6 @@ def register(request):
     print("register: request.body = ", request.body)
     req = json.loads(request.body)
     print("req json loaded = ", req)
-    # body_unicode = request.body.decode('utf-8')
-    # print("register: body_unicode = ", body_unicode)
-    # post_unicode = request.POST.decode('utf-8')
-    # print("register: post_unicode = ", post_unicode)
-    # print("register: req.registerFormFirstName = ", req.registerFormFirstName)
     errors = User.objects.register_validator(req)
     if len(errors) > 0:
         for key, value in errors.items():
@@ -47,27 +43,29 @@ def register(request):
         # redirect to stay on same page
         return redirect(request.META.get('HTTP_REFERER'))
     else:
-        registerFormFirstName = request.POST['registerFormFirstName']
-        registerFormLastName = request.POST['registerFormLastName']
-        registerFormEmail = request.POST['registerFormEmail']
-        registerFormPassword = request.POST['registerFormPassword']
-        registerFormConfirmPassword = request.POST['registerFormConfirmPassword']
+        # registerFormFirstName = request.POST['registerFormFirstName']
+        # registerFormLastName = request.POST['registerFormLastName']
+        registerFormUsername = req['username']
+        registerFormEmail = req['email']
+        registerFormPassword = req['password1']
+        registerFormConfirmPassword = req['password2']
         hashPassword = bcrypt.hashpw(registerFormPassword.encode(), bcrypt.gensalt()).decode()
 
         this_user = User.objects.filter(email=registerFormEmail)
         if len(this_user) != 0:
             return redirect("/")
 
-        this_user = User.objects.create(firstName=registerFormFirstName, lastName=registerFormLastName, email=registerFormEmail, password=hashPassword)
+        this_user = User.objects.create(username=registerFormUsername, email=registerFormEmail, password=hashPassword)
         smLinkedIn = SocialMedia.objects.create(name="LinkedIn", user=this_user)
         smGithub = SocialMedia.objects.create(name="GitHub", user=this_user)
         smStackoverflow = SocialMedia.objects.create(name="Stack Overflow", user=this_user)
         this_skill = Skill.objects.create(user=this_user)
 
-        request.session["firstName"] = registerFormFirstName
-        request.session['userEmail'] = registerFormEmail
+        request.session["username"] = registerFormUsername
         request.session['pickPortfolioID'] = ""
-        return redirect("/userProfile")
+        response = HttpResponse()
+        response['status'] = "Done"
+        return response
 
 def signin(request):
     return render(request, "login.html")
@@ -81,19 +79,20 @@ def login(request):
         # redirect to stay on same page
         return redirect(request.META.get('HTTP_REFERER'))
     else:
-        loginFormEmail = request.POST['loginFormEmail']
-        loginFormPassword = request.POST['loginFormPassword']
-        user = User.objects.filter(email=loginFormEmail)
+        loginFormUsername = request.POST['username']
+        loginFormPassword = request.POST['password']
+        user = User.objects.filter(email=loginFormUsername)
         if user:
             logged_user = user[0]
             if bcrypt.checkpw(loginFormPassword.encode(), logged_user.password.encode()):
-                request.session['userEmail'] = logged_user.email
-                request.session["firstName"] = logged_user.firstName
+                request.session["username"] = logged_user.username
                 request.session['pickPortfolioID'] = ""
                 return redirect("/dashboard")
 
         messages.error(request, "Password does not match")
-        return redirect("/")
+        response = HttpResponse()
+        response['status'] = "Done"
+        return response
 
 def logout(request):
     try:
@@ -121,7 +120,7 @@ def convertStrToArray(obj):
 
 def dashboard(request):
     
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
 
     if this_user.skill.languages != None:
         langList = convertStrToArray(this_user.skill.languages) 
@@ -191,7 +190,6 @@ class PortfolioList(generics.ListCreateAPIView):
 
 # Used for GET, PUT, and DELETE methods
 class PortfolioDetail(generics.RetrieveUpdateDestroyAPIView):
-    print("views: PortfolioDetail ")
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
 
@@ -201,7 +199,7 @@ def portfolioCreate(request):
     newSummary = request.POST['portfolioFormSummary']
     # newResume = request.POST['portfolioFormResume']
     projList = request.POST.getlist('checks[]')
-    newUser = User.objects.get(email = request.session['userEmail'])
+    newUser = User.objects.get(email = request.session['username'])
     newPort = Portfolio.objects.create(name = newName, title = newTitle, portfolioSummary = newSummary,user = newUser)
 
     for i in projList:
@@ -211,7 +209,7 @@ def portfolioCreate(request):
     return redirect('/dashboard')
     
 def portfolioNew(request):
-    currUser = User.objects.get(email = request.session['userEmail'])
+    currUser = User.objects.get(email = request.session['username'])
     allProj = currUser.project.all()
     context = {
         'projects': allProj
@@ -227,7 +225,7 @@ def assignProject(request,val):
 
 def portfolioEdit(request, id):
     portfolioToEdit = Portfolio.objects.get(id = id)
-    currUser = User.objects.get(email = request.session['userEmail'])
+    currUser = User.objects.get(email = request.session['username'])
     allProj = currUser.project.all()
     assignedProjects = portfolioToEdit.project.all()
     #Below makes project available to portfolio
@@ -270,7 +268,7 @@ def projectCreate(request):
     newTeam = request.POST['projectFormTeam'] 
     newProcess = request.POST['projectFormProcess']
     newURL = request.POST['projectFormURL']
-    newUser = User.objects.get(email = request.session['userEmail'])
+    newUser = User.objects.get(email = request.session['username'])
     Project.objects.create(name = newName, summary = newSummary, techUsed = newTech, team = newTeam, process = newProcess, url = newURL,user = newUser )
     return redirect('/dashboard')
 
@@ -305,14 +303,14 @@ def projectEdit(request, id):
 # User functions
 #
 def userProfile(request):
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
 
     formLanguages = LanguagesForm
     formFrameworks = FrameworksForm
     formDatabases = DatabasesForm
     formClouds = CloudsForm
     pdfForm = PDFForm(request.POST, request.FILES)
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
     all_res = this_user.resume
     smLinkedIn = SocialMedia.objects.get(name="LinkedIn", user=this_user)
     smGithub = SocialMedia.objects.get(name="GitHub", user=this_user)
@@ -341,7 +339,7 @@ def userCreate(request):
         # redirect to stay on same page
         return redirect(request.META.get('HTTP_REFERER'))
     else:
-        this_user = User.objects.get(email=request.session['userEmail'])
+        this_user = User.objects.get(username=request.session['username'])
 
         this_user.firstName = request.POST["profileFormFirstName"]
         this_user.lastName = request.POST["profileFormLastName"]
@@ -411,8 +409,7 @@ def userCreate(request):
         skill.save()
 
         this_user.save()
-        request.session["firstName"] = this_user.firstName
-        request.session['userEmail'] = this_user.email
+        request.session["username"] = this_user.username
 
         return redirect("/dashboard")
 
@@ -421,7 +418,7 @@ def userCreate(request):
 # Website stuff
 #
 def websitePreview(request):
-    user = User.objects.get(email=request.session['userEmail'])
+    user = User.objects.get(username=request.session['username'])
     portfolios = Portfolio.objects.all()
     projects = Project.objects.all()
     skills = Skill.objects.all()
@@ -435,7 +432,7 @@ def websitePreview(request):
     return render(request, "websitePreview.html", context)
 
 def websiteCreate(request):
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
     portfolios = Portfolio.objects.all()
     projects = Project.objects.all()
     if this_user.skill.languages != None:
@@ -477,7 +474,7 @@ def applyJob(request):
     return render(request, "applyJob.html", context)
 
 def viewJob(request):
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
 
     errors = Job.objects.job_validator(request.POST)
     if len(errors) > 0:
@@ -516,7 +513,7 @@ def updateJob(request,id):
 
 
 def newJob(request,id):
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
     this_job = Job.objects.get(id=id)
 
     this_job.jobTitle = request.POST['JobFormtitle']
@@ -534,7 +531,7 @@ def newJob(request,id):
     return redirect("/dashboard")
 
 def jobStatistic(request):
-    this_user = User.objects.get(email=request.session['userEmail'])
+    this_user = User.objects.get(username=request.session['username'])
     this_job = Job.objects.all()
     numbofJobApplied = this_job.count()
 

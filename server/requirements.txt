@@ -13,9 +13,13 @@ Django==2.2
 django-bootstrap4==1.1.1
 django-cors-headers==3.4.0
 django-crispy-forms==1.8.1
+dj-rest-auth @ git+https://github.com/jazzband/dj-rest-auth.git@master
 djangorestframework==3.11.0
+djangorestframework-simplejwt==4.4.0
+django-allauth>=0.24.1
+django-rest-swagger==2.0.7
+coreapi==2.3.3
 filelock==3.0.12
-Flask==1.1.2
 google-api-core==1.17.0
 google-auth==1.14.1
 google-cloud-storage==1.28.1

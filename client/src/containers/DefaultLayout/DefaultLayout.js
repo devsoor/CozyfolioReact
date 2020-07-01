@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
 
@@ -23,20 +23,19 @@ const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
 const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
-class DefaultLayout extends Component {
-  loading = () => <div className="animated fadeIn pt-1 text-center"><div className="sk-spinner sk-spinner-pulse"></div></div>;
+const DefaultLayout = (props) => {
+  const loading = () => <div className="animated fadeIn pt-1 text-center"><div className="sk-spinner sk-spinner-pulse"></div></div>;
 
-  signOut(e) {
+  const signOut = (e) => {
     e.preventDefault()
-    this.props.history.push('/login')
+    props.history.push('/login')
   }
 
-  render() {
     return (
       <div className="app">
         <AppHeader fixed>
-          <Suspense fallback={this.loading()}>
-            <DefaultHeader onLogout={e=>this.signOut(e)}/>
+          <Suspense fallback={loading()}>
+            <DefaultHeader onLogout={e=>signOut(e)}/>
           </Suspense>
         </AppHeader>
         <div className="app-body">
@@ -44,7 +43,7 @@ class DefaultLayout extends Component {
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-            <AppSidebarNav navConfig={navigation} {...this.props} />
+            <AppSidebarNav navConfig={navigation} {...props} />
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />
@@ -52,7 +51,7 @@ class DefaultLayout extends Component {
           <main className="main">
             <AppBreadcrumb appRoutes={routes}/>
             <Container fluid>
-              <Suspense fallback={this.loading()}>
+              <Suspense fallback={loading()}>
                 <Switch>
                   {routes.map((route, idx) => {
                     return route.component ? (
@@ -72,19 +71,18 @@ class DefaultLayout extends Component {
             </Container>
           </main>
           <AppAside fixed>
-            <Suspense fallback={this.loading()}>
+            <Suspense fallback={loading()}>
               <DefaultAside />
             </Suspense>
           </AppAside>
         </div>
         <AppFooter>
-          <Suspense fallback={this.loading()}>
+          <Suspense fallback={loading()}>
             <DefaultFooter />
           </Suspense>
         </AppFooter>
       </div>
     );
-  }
 }
 
 export default DefaultLayout;
