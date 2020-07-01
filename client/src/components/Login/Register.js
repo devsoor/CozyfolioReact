@@ -10,9 +10,9 @@ const Register = () => {
   const [ email, changeEmail ] =  useState('');
   const [ toDashboard, setToDashboard ] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    return fetch('/dj-rest-auth/registration/', {
+    await fetch('/dj-rest-auth/registration/', {
       method: 'POST',
       credentials: 'omit',
       headers: {
@@ -21,7 +21,14 @@ const Register = () => {
       },
       body:  JSON.stringify({username, password1, password2, email})
     }).then(resp => resp.json()).then(data => {
-        data.access_token ? setToDashboard(true) : changeResponse(data)
+        console.log("register: fetch: data = ", data)
+        if (data.access_token || data.key) {
+          localStorage.setItem('access_token', data.access_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
+          setToDashboard(true)
+        } else {
+          changeResponse(data)
+        }
     }).catch(error => console.log('error ->', error))
   }
 

@@ -22,7 +22,14 @@ const Login = () => {
         body:  JSON.stringify({username, password})
       }).then(resp => resp.json()).then(data => {
         console.log("Login: fetch data = ", data)
-        data.access_token ? setToDashboard(true) : changeResponse(data)
+        if (data.access_token || data.key) {
+          localStorage.setItem('access_token', data.access_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
+          localStorage.setItem('key', data.key);
+          setToDashboard(true)
+        } else {
+          changeResponse(data)
+        }
       }).catch(error => console.log('error ->', error))
   }
 

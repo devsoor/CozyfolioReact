@@ -5,6 +5,7 @@ from django.db import models
 import re
 import bcrypt
 from datetime import date, datetime, timedelta
+from django.utils.timezone import now
 import pprint
 from django.conf import settings
 # Create your models here.
@@ -125,8 +126,8 @@ class Portfolio(models.Model):
     title = models.CharField(max_length=100, null=True)
     portfolioSummary = models.TextField(null=True)
     resume = models.FileField(upload_to='media/', null=True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
 
     def __repr__(self):

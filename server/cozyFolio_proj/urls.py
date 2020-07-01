@@ -5,6 +5,10 @@ from django.conf.urls.static import static, serve
 from django.views.generic import RedirectView
 from django.contrib.auth import views
 from rest_framework_simplejwt import views as jwt_views
+from rest_framework_simplejwt.views import (
+    TokenObtainSlidingView,
+    TokenRefreshSlidingView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -19,8 +23,8 @@ urlpatterns = [
     path('password_change/done/', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     path('password_reset/', views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/obtain', jwt_views.TokenObtainSlidingView.as_view(), name='token_obtain'),
+    path('api/token/refresh/', jwt_views.TokenRefreshSlidingView.as_view(), name='token_refresh'),
 ]
 
 if settings:

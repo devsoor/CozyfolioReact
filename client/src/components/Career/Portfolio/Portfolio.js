@@ -5,8 +5,13 @@ import {
   CardHeader,
   Col,
   Row,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from 'reactstrap';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom'
 import PortfolioForm from './PortfolioForm';
 import PortfolioEdit from './PortfolioEdit';
 
@@ -18,54 +23,82 @@ const Portfolio = (props) => {
         portfolioSummary: ''
     }
     const [portfolios, setPortfolios] = useState([]);
-
     const [inCreateMode, setInCreateMode] = useState(false);
+    const [modal, setModal] = useState(false);
 
     useEffect(() => {
-        axios.defaults.xsrfCookieName = 'csrftoken'
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-        axios.get('/portfolios')
-            .then(response => {
-                console.log("useEffect: axios get response = ", response)
-                setPortfolios(response.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+        const token = localStorage.getItem('access_token')
+        console.log("Portfolio: access token: ", token)
+        fetch('/portfolio', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+            },
+            // body:  JSON.stringify()
+        }).then(resp => resp.json()).then(data => {
+            console.log("portfolios: fetch: data = ", data)
+            setPortfolios(data)
+        }).catch(error => console.log('error ->', error))
     }, []);
 
+    const toggle = () => setModal(!modal);
+
     const handlePortfolioChange = (id, name, value) => {
-        console.log("Portfolio: handlePortfolioChange, id = ", id)
-        console.log("Portfolio: handlePortfolioChange, name = ", name)
-        console.log("Portfolio: handlePortfolioChange, value = ", value)
-        // find the object in portfolio array that needs to be replaced 
         setPortfolios({...portfolios, [name]: value});
     }
 
-    const createPortfolio = (portfolio) => {
-        console.log("createPortfolio: portfolio = ", portfolio)
-        axios.post('/portfolios')
-            .then(portfolio => setPortfolios([...portfolios], portfolio))
-            .then(setInCreateMode(false))
-            .catch(err => console.log(err))
+    const createPortfolio = async (pfolio) => {
+        console.log("createPortfolio: pfolio = ", pfolio)
+        await fetch('/portfolio', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+            },
+            body:  JSON.stringify(pfolio)
+        }).then(resp => resp.json()).then(data => {
+            const [...newPortfolio] = portfolios;
+            newPortfolio.push(data);
+            setPortfolios(newPortfolio)
+            toggle()
+        }).catch(error => console.log('Error creating portfolio ->', error))
     }
         
-    const updatePortfolio = (newPortfolio) => {
+    const updatePortfolio = async (newPortfolio) => {
         console.log("updatePortfolio: newPortfolio = ", newPortfolio)
-        axios.put('/portfolios/' + newPortfolio.id)
-        .then(response => setPortfolios([...portfolios], response.data))
-        .catch(err => console.log(err))
+        await fetch('/portfolio/', {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+            },
+            body:  JSON.stringify(newPortfolio.id)
+        }).then(resp => resp.json()).then(data => {
+            setPortfolios([...portfolios], data)
+        }).catch(error => console.log('Error updating portfolio ->', error))
     }
 
-    const deletePortfolio = (id) => {
-        axios.delete('/portfolios/' + id)
-        .then(res => {
+    const deletePortfolio = async (id) => {
+        console.log("deletePortfolio: id = ",id)
+        await fetch('/portfolio', {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+            },
+            body:  JSON.stringify(id)
+        }).then(resp => resp.json()).then(data => {
             setPortfolios(portfolios.filter(folio => folio.id != id));
-            
-        })
-        .catch(err => {
-            console.log("Error deleting portfolio. ", err);
-        })
+        }).catch(error => console.log('Error deleting portfolio ->', error))
     }
 
     const handleCreateClick = () => {
@@ -87,11 +120,21 @@ const Portfolio = (props) => {
                                 Portfolios
                             </Col>
                             <Col sm="7" className="d-none d-md-block">
-                                <Button onClick={handleCreateClick} className="bg-info float-right">New</Button>
+                                <Button onClick={toggle} className="bg-info float-right">New</Button>
+                                <Modal isOpen={modal} toggle={toggle}>
+                                    <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                                        <ModalBody>
+                                            <PortfolioForm
+                                                portfolio={defaultPortfolio}
+                                                onFormSubmit={createPortfolio}
+                                                onCancelClick={toggle}>
+                                            </PortfolioForm>
+                                        </ModalBody>                        
+                                </Modal>
                             </Col>
                         </Row>                
                     </CardHeader>
-                    {
+                    {/* {
                         inCreateMode ? (
                             <Card>
                                 <PortfolioForm
@@ -100,9 +143,9 @@ const Portfolio = (props) => {
                                     onCancelClick={handleCancelClick}>
                                 </PortfolioForm>
                             </Card>
-                        ) : (
+                        ) : ( */}
                             <PortfolioEdit portfolios={portfolios} onPortfolioChange={handlePortfolioChange} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio}/>
-                        )}
+                        {/* )} */}
                 </Card>
             </Col>
         </Row>

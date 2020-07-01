@@ -1,4 +1,4 @@
-from django.urls import path     
+from django.urls import path, re_path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -16,8 +16,8 @@ urlpatterns = [
     # path('dashboard', views.dashboard),
     path('userProfile', views.userProfile),
     path('userCreate', views.userCreate),
-    path('career/portfolios', views.PortfolioList.as_view()),
-    path('career/portfolios/<int:pk>/', views.PortfolioDetail.as_view()),
+    path('portfolio', views.PortfolioList.as_view()),
+    re_path(r'^portfolio/(?P<pk>[0-9]+)/$', views.PortfolioDetail.as_view()),
     # path('portfolioNew', views.portfolioNew),
     # path('portfolioCreate', views.portfolioCreate),
     # path('portfolioEdit/<int:id>', views.portfolioEdit),

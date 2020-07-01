@@ -16,6 +16,7 @@ import PortfolioForm from './PortfolioForm';
 
 const PortfolioEdit = (props) => {
     console.log("PortfolioEdit: props = ", props)
+    const {portfolios} = props.portfolios;
     props.portfolios.map(f => {
         console.log("in MAP: f.name = ", f.name)
     })
@@ -63,73 +64,79 @@ const PortfolioEdit = (props) => {
     return (
         <Card>
             <CardBody>
-                <Row>
-                    <Col xs="4">
-                        <ListGroup id="list-tab" role="tablist" >
-                            {
-                               props.portfolios.map((pfolio, i) => (
-                                    <CardHeader key={i}>
-                                        <Row className="row align-items-center">
-                                            <Col sm="8">
-                                                <ListGroupItem key={i} onClick={() => { toggle(i) }} action active={activeTab === {i}} >{pfolio.name}</ListGroupItem>
-                                            </Col>
-                                            <Col sm="4">
-                                                <Button onClick={enterEditMode} className="mr-2 bg-warning"><i className="fa fa-edit"></i></Button>
-                                                <Button onClick={e=>handleDelete(e, pfolio.id)} className="bg-danger"><i className="fa fa-trash"></i></Button>
-                                            </Col>
-                                        </Row>
-                                    </CardHeader>
-                                ))
-                            } 
-                        </ListGroup>
-                    </Col>
-                    <Col xs="8">
-                        <TabContent activeTab={activeTab}>
-                            {
-                                props.portfolios.map((pfolio, i) => (
-                                    <TabPane key={i} tabId={i.toString()}>
-                                    <Card>
-                                        <CardHeader>
-                                        {pfolio.name}
-                                        </CardHeader>
-                                            <CardBody>
-                                                {
-                                                    inEditMode ? (
-                                                        <PortfolioForm
-                                                            portfolio={pfolio}
-                                                            onValueChange={handleValueChange}
-                                                            onCancelClick={leaveEditMode}
-                                                            onFormSubmit={handleUpdate}>
-                                                        </PortfolioForm>
-                                                    ) : (
-                                                        <CardBody>
-                                                            <Row>
-                                                                <Label >Job Title</Label>
-                                                                <p>{pfolio.title}</p>
-                                                            </Row>
-                                                            <Row>
-                                                                <h3>Summary</h3>
-                                                                <p>{pfolio.portfolioSummary}</p>
-                                                            </Row>
-                                                            <Row>
-                                                                <h3>Projects</h3>
-                                                                {
-                                                                    projectNames.map((proj,i) => 
-                                                                        <Col key={i}>{proj.value}</Col>
-                                                                    )
-                                                                }
-                                                            </Row>
-                                                        </CardBody>
-                                                    )
-                                                }
-                                            </CardBody>
-                                    </Card>
-                                </TabPane>
-                                ))
-                            }
-                        </TabContent>
-                    </Col>
-                </Row>
+                {
+                    !props.portfolios.length ? (
+                        <h3>No portfolios available. Click on New to add one.</h3>
+                    ) : (
+                        <Row>
+                            <Col xs="4">
+                                <ListGroup id="list-tab" role="tablist" >
+                                    {
+                                    props.portfolios.map((pfolio, i) => (
+                                            <CardHeader key={i}>
+                                                <Row className="row align-items-center">
+                                                    <Col sm="8">
+                                                        <ListGroupItem key={i} onClick={() => { toggle(i) }} action active={activeTab === {i}} >{pfolio.name}</ListGroupItem>
+                                                    </Col>
+                                                    <Col sm="4">
+                                                        <Button onClick={enterEditMode} className="mr-2 bg-warning"><i className="fa fa-edit"></i></Button>
+                                                        <Button onClick={e=>handleDelete(e, pfolio.id)} className="bg-danger"><i className="fa fa-trash"></i></Button>
+                                                    </Col>
+                                                </Row>
+                                            </CardHeader>
+                                        ))
+                                    } 
+                                </ListGroup>
+                            </Col>
+                            <Col xs="8">
+                                <TabContent activeTab={activeTab}>
+                                    {
+                                        props.portfolios.map((pfolio, i) => (
+                                            <TabPane key={i} tabId={i.toString()}>
+                                            <Card>
+                                                <CardHeader>
+                                                {pfolio.name}
+                                                </CardHeader>
+                                                    <CardBody>
+                                                        {
+                                                            inEditMode ? (
+                                                                <PortfolioForm
+                                                                    portfolio={pfolio}
+                                                                    onValueChange={handleValueChange}
+                                                                    onCancelClick={leaveEditMode}
+                                                                    onFormSubmit={handleUpdate}>
+                                                                </PortfolioForm>
+                                                            ) : (
+                                                                <CardBody>
+                                                                    <Row>
+                                                                        <Label >Job Title</Label>
+                                                                        <p>{pfolio.title}</p>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <h3>Summary</h3>
+                                                                        <p>{pfolio.portfolioSummary}</p>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <h3>Projects</h3>
+                                                                        {
+                                                                            projectNames.map((proj,i) => 
+                                                                                <Col key={i}>{proj.value}</Col>
+                                                                            )
+                                                                        }
+                                                                    </Row>
+                                                                </CardBody>
+                                                            )
+                                                        }
+                                                    </CardBody>
+                                            </Card>
+                                        </TabPane>
+                                        ))
+                                    }
+                                </TabContent>
+                            </Col>
+                        </Row>
+                    )
+                }
             </CardBody>
         </Card>
     )

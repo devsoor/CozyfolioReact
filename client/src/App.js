@@ -14,6 +14,7 @@ const Register = React.lazy(() => import('./components/Login/Register'));
 const Page404 = React.lazy(() => import('./components/Login/Page404'));
 const Page403 = React.lazy(() => import('./components/Login/Page403'));
 const Page500 = React.lazy(() => import('./components/Login/Page500'));
+const Portfolio = React.lazy(() => import('./components/Career/Portfolio/Portfolio'));
 
 const BASE_PATH = '/login';
 
@@ -28,8 +29,9 @@ const App = (props) => {
                 <Route exact path="/register" name="Register Page" render={props => <Register {...props}/>} />
                 <Route exact path="/404" name="Page 404" render={props => <Page404 {...props}/>} />
                 <Route exact path="/500" name="Page 500" render={props => <Page500 {...props}/>} />
-                <Route path="/dashboard" name="Home" component={DefaultLayout} />
-                {/* <Route path="/dashboard" name="Home" render={props => <DefaultLayout {...props}/>} /> */}
+                {/* <Route path="/dashboard" name="Home" component={DefaultLayout} /> */}
+                <Route path="/career/portfolios" name="Portfolio" component={Portfolio} />
+                <Route path="/dashboard" name="Home" render={props => <DefaultLayout {...props}/>} />
               </Switch>
             </React.Suspense>
         <Redirect from="/" to={`${BASE_PATH}`} noThrow />
