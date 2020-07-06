@@ -10,12 +10,13 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap';
-import axios from 'axios';
-import { Redirect } from 'react-router-dom'
 import PortfolioForm from './PortfolioForm';
 import PortfolioEdit from './PortfolioEdit';
+import { useAuth } from "../../../Auth/Context";
 
 const Portfolio = (props) => {
+    const { authTokens } = useAuth();
+
     const defaultPortfolio = {
         id: '',
         name: '',
@@ -23,23 +24,19 @@ const Portfolio = (props) => {
         portfolioSummary: ''
     }
     const [portfolios, setPortfolios] = useState([]);
-    const [inCreateMode, setInCreateMode] = useState(false);
     const [modal, setModal] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem('access_token')
-        console.log("Portfolio: access token: ", token)
         fetch('/portfolio', {
             method: 'GET',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+                'Authorization': 'JWT ' +  authTokens
             },
             // body:  JSON.stringify()
         }).then(resp => resp.json()).then(data => {
-            console.log("portfolios: fetch: data = ", data)
             setPortfolios(data)
         }).catch(error => console.log('error ->', error))
     }, []);
@@ -51,14 +48,13 @@ const Portfolio = (props) => {
     }
 
     const createPortfolio = async (pfolio) => {
-        console.log("createPortfolio: pfolio = ", pfolio)
         await fetch('/portfolio', {
             method: 'POST',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+                'Authorization': 'JWT ' +  authTokens
             },
             body:  JSON.stringify(pfolio)
         }).then(resp => resp.json()).then(data => {
@@ -70,47 +66,48 @@ const Portfolio = (props) => {
     }
         
     const updatePortfolio = async (newPortfolio) => {
-        console.log("updatePortfolio: newPortfolio = ", newPortfolio)
-        await fetch('/portfolio/', {
+        await fetch('/portfolio/' + newPortfolio.id, {
             method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+                'Authorization': 'JWT ' +  authTokens
             },
-            body:  JSON.stringify(newPortfolio.id)
-        }).then(resp => resp.json()).then(data => {
-            setPortfolios([...portfolios], data)
-        }).catch(error => console.log('Error updating portfolio ->', error))
+            body:  JSON.stringify(newPortfolio)
+        }).then(resp => resp.json())
+        .then(newPortfolio => {
+            const newPortfolios = portfolios.map(folio => {
+                if (folio.id == newPortfolio.id) {
+                    return Object.assign({}, newPortfolio)
+                } else {
+                    return folio;
+                }
+            });
+            setPortfolios(newPortfolios);
+        })
+
     }
 
     const deletePortfolio = async (id) => {
-        console.log("deletePortfolio: id = ",id)
-        await fetch('/portfolio', {
+        await fetch('/portfolio/' + id, {
             method: 'DELETE',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'JWT ' +  localStorage.getItem('access_token')
+                'Authorization': 'JWT ' +  authTokens
             },
-            body:  JSON.stringify(id)
-        }).then(resp => resp.json()).then(data => {
-            setPortfolios(portfolios.filter(folio => folio.id != id));
+            // body:  JSON.stringify(id)
+        }).then(resp => {
+            if (resp.status == 204) {
+                setPortfolios(portfolios.filter(folio => folio.id != id));
+            }
         }).catch(error => console.log('Error deleting portfolio ->', error))
     }
 
-    const handleCreateClick = () => {
-        setInCreateMode(true);
-    }
-
-    const handleCancelClick = () => {
-        setInCreateMode(false);
-    }
-
     return (
-        <>
+        <div className="animated fadeIn">
         <Row>
             <Col>
                 <Card>
@@ -134,22 +131,11 @@ const Portfolio = (props) => {
                             </Col>
                         </Row>                
                     </CardHeader>
-                    {/* {
-                        inCreateMode ? (
-                            <Card>
-                                <PortfolioForm
-                                    portfolio={defaultPortfolio}
-                                    onFormSubmit={createPortfolio}
-                                    onCancelClick={handleCancelClick}>
-                                </PortfolioForm>
-                            </Card>
-                        ) : ( */}
-                            <PortfolioEdit portfolios={portfolios} onPortfolioChange={handlePortfolioChange} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio}/>
-                        {/* )} */}
+                    <PortfolioEdit portfolios={portfolios} onPortfolioChange={handlePortfolioChange} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio}/>
                 </Card>
             </Col>
         </Row>
-        </>
+        </div>
     )
 }
 

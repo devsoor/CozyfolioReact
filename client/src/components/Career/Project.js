@@ -1,6 +1,7 @@
-import React  from 'react';
+import React from 'react';
 
-const Project = (props) => {
+const Project = () => {
+    console.log("Project")
     return (
         <div>Project</div>
     )

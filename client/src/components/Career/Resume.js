@@ -1,8 +1,9 @@
 import React from 'react';
 
 const Resume = (props) => {
+    console.log("Resume")
     return (
-        <div>Resume</div>
+        <h3>Resume</h3>
     )
 }
 

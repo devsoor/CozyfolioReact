@@ -128,7 +128,7 @@ class Portfolio(models.Model):
     resume = models.FileField(upload_to='media/', null=True)
     created_at = models.DateTimeField(default=now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
+    # user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
 
     def __repr__(self):
         return f"Portfolio object: {self.id} {self.name} {self.title}"

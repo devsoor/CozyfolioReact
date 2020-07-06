@@ -15,11 +15,7 @@ import {
 import PortfolioForm from './PortfolioForm';
 
 const PortfolioEdit = (props) => {
-    console.log("PortfolioEdit: props = ", props)
     const {portfolios} = props.portfolios;
-    props.portfolios.map(f => {
-        console.log("in MAP: f.name = ", f.name)
-    })
     const [inEditMode, setInEditMode] = useState(false);
     const [activeTab, setActiveTab] = useState('1')
     const [proj, setProj] = React.useState('Python')
@@ -46,9 +42,6 @@ const PortfolioEdit = (props) => {
     }
 
     const handleValueChange = (id, name, value) => {
-        console.log("PortfolioEdit: handleValueChange, id = ", id)
-        console.log("PortfolioEdit: handleValueChange, name = ", name)
-        console.log("PortfolioEdit: handleValueChange, value = ", value)
         props.onPortfolioChange(id, name, value);
     }
 

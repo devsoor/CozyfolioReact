@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
-
 import axios from 'axios';
+import { useAuth } from "../Auth/Context";
 
-const Login = () => {
+const Login = (props) => {
   const [ resp, changeResponse ] = useState(null);
   const [ username, changeUsername ] =  useState('');
   const [ password, changePassword ] =  useState('');
   const [ toDashboard, setToDashboard ] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(false);
+  const { setAuthTokens } = useAuth();
 
   const loginSubmit = (event) => {
       event.preventDefault();
@@ -21,17 +23,18 @@ const Login = () => {
         },
         body:  JSON.stringify({username, password})
       }).then(resp => resp.json()).then(data => {
-        console.log("Login: fetch data = ", data)
-        if (data.access_token || data.key) {
-          localStorage.setItem('access_token', data.access_token);
-          localStorage.setItem('refresh_token', data.refresh_token);
-          localStorage.setItem('key', data.key);
-          setToDashboard(true)
+          if (data.access_token) {
+            setAuthTokens(data)
+            setToDashboard(true)
         } else {
           changeResponse(data)
         }
       }).catch(error => console.log('error ->', error))
   }
+
+  // if (isLoggedIn) {
+  //   return <Redirect to={"/"} />;
+  // }
 
   return (
     <div>

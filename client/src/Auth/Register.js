@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { Button, Card, CardBody, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
+import { useAuth } from '../Auth/Context';
 
 const Register = () => {
   const [ resp, changeResponse ] = useState(null);
@@ -9,6 +10,7 @@ const Register = () => {
   const [ password2, changePassword2 ] =  useState('');
   const [ email, changeEmail ] =  useState('');
   const [ toDashboard, setToDashboard ] = useState(false);
+  const { setAuthTokens } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,9 +24,10 @@ const Register = () => {
       body:  JSON.stringify({username, password1, password2, email})
     }).then(resp => resp.json()).then(data => {
         console.log("register: fetch: data = ", data)
-        if (data.access_token || data.key) {
-          localStorage.setItem('access_token', data.access_token);
-          localStorage.setItem('refresh_token', data.refresh_token);
+        if (data.access_token) {
+          setAuthTokens(data)
+          // localStorage.setItem('access_token', data.access_token);
+          // localStorage.setItem('refresh_token', data.refresh_token);
           setToDashboard(true)
         } else {
           changeResponse(data)
@@ -35,7 +38,7 @@ const Register = () => {
   return (
     <div>
       {
-        toDashboard && <Redirect to="/dashboard"/>
+        toDashboard && <Redirect to="/defaultlayout"/>
       }
       <div className="app flex-row align-items-center">
         <Container>

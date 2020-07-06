@@ -1,6 +1,9 @@
-import React, { Suspense } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
+import AuthenticatedRoute from '../../routes/AuthenticatedRoute';
+// import routes from '../../routes/SiteRoutes'
+import SiteRoutes from '../../routes/SiteRoutes'
 
 import {
   AppAside,
@@ -17,7 +20,7 @@ import {
 // sidebar nav config
 import navigation from '../../_nav';
 // routes config
-import routes from '../../routes';
+// import routes from '../../routes';
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
@@ -49,24 +52,11 @@ const DefaultLayout = (props) => {
             <AppSidebarMinimizer />
           </AppSidebar>
           <main className="main">
-            <AppBreadcrumb appRoutes={routes}/>
+            {/* <AppBreadcrumb appRoutes={routes}/> */}
             <Container fluid>
               <Suspense fallback={loading()}>
-                <Switch>
-                  {routes.map((route, idx) => {
-                    return route.component ? (
-                      <Route
-                        key={idx}
-                        path={route.path}
-                        exact={route.exact}
-                        name={route.name}
-                        render={props => (
-                          <route.component {...props} />
-                        )} />
-                    ) : (null);
-                  })}
+                <SiteRoutes/>
                   <Redirect from="/" to="/dashboard" />
-                </Switch>
               </Suspense>
             </Container>
           </main>
