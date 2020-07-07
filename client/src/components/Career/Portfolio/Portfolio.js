@@ -7,13 +7,11 @@ import {
   Row,
   Modal,
   ModalHeader,
-  ModalBody,
-  ModalFooter
+  ModalBody
 } from 'reactstrap';
 import PortfolioForm from './PortfolioForm';
 import PortfolioEdit from './PortfolioEdit';
 import { useAuth } from "../../../Auth/Context";
-import { apiGet, apiCreate, apiUpdate, apiDelete } from '../../../api/ServerAPI';
 import ServerApi from '../../../api/ServerAPI';
 
 const Portfolio = (props) => {
@@ -29,20 +27,6 @@ const Portfolio = (props) => {
     const [modal, setModal] = useState(false);
     let api = new ServerApi();
 
-    // useEffect(() => {
-    //     fetch('/portfolio', {
-    //         method: 'GET',
-    //         credentials: 'include',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Accept': 'application/json',
-    //             'Authorization': 'JWT ' +  authTokens
-    //         }
-    //     }).then(resp => resp.json()).then(data => {
-    //         setPortfolios(data)
-    //     }).catch(error => console.log('error ->', error))
-    // }, []);
-
     useEffect(() => {
         api.get('/portfolio')
         .then(resp => resp.json()).then(data => {
@@ -56,17 +40,9 @@ const Portfolio = (props) => {
         setPortfolios({...portfolios, [name]: value});
     }
 
-    const createPortfolio = async (pfolio) => {
-        await fetch('/portfolio', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'JWT ' +  authTokens
-            },
-            body:  JSON.stringify(pfolio)
-        }).then(resp => resp.json()).then(data => {
+    const createPortfolio = (pfolio) => {
+        api.create('/portfolio', pfolio)
+        .then(resp => resp.json()).then(data => {
             const [...newPortfolio] = portfolios;
             newPortfolio.push(data);
             setPortfolios(newPortfolio)
@@ -74,17 +50,9 @@ const Portfolio = (props) => {
         }).catch(error => console.log('Error creating portfolio ->', error))
     }
         
-    const updatePortfolio = async (newPortfolio) => {
-        await fetch('/portfolio/' + newPortfolio.id, {
-            method: 'PUT',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'JWT ' +  authTokens
-            },
-            body:  JSON.stringify(newPortfolio)
-        }).then(resp => resp.json())
+    const updatePortfolio = (newPortfolio) => {
+        api.update('/portfolio/', newPortfolio.id, newPortfolio)
+        .then(resp => resp.json())
         .then(newPortfolio => {
             const newPortfolios = portfolios.map(folio => {
                 if (folio.id == newPortfolio.id) {
@@ -99,16 +67,8 @@ const Portfolio = (props) => {
     }
 
     const deletePortfolio = async (id) => {
-        await fetch('/portfolio/' + id, {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'JWT ' +  authTokens
-            },
-            // body:  JSON.stringify(id)
-        }).then(resp => {
+        api.delete('/portfolio/', id)
+        .then(resp => {
             if (resp.status == 204) {
                 setPortfolios(portfolios.filter(folio => folio.id != id));
             }
@@ -123,7 +83,7 @@ const Portfolio = (props) => {
                     <CardHeader>
                         <Row>
                             <Col sm="5">
-                                Portfolios
+                                <h3>Portfolios</h3>
                             </Col>
                             <Col sm="7" className="d-none d-md-block">
                                 <Button onClick={toggle} className="bg-info float-right">New</Button>
@@ -133,7 +93,8 @@ const Portfolio = (props) => {
                                             <PortfolioForm
                                                 portfolio={defaultPortfolio}
                                                 onFormSubmit={createPortfolio}
-                                                onCancelClick={toggle}>
+                                                onCancelClick={toggle}
+                                                editMode={true}>
                                             </PortfolioForm>
                                         </ModalBody>                        
                                 </Modal>

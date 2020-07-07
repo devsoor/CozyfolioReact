@@ -6,7 +6,7 @@ import AuthenticatedRoute from "./AuthenticatedRoute";
 // Components
 const Dashboard = React.lazy(() => import('../components/Dashboard'));
 const Portfolio = React.lazy(() => import('../components/Career/Portfolio/Portfolio'));
-const Project = React.lazy(() => import('../components/Career/Project'));
+const Project = React.lazy(() => import('../components/Career/Project/Project'));
 const Resume = React.lazy(() => import('../components/Career/Resume'));
 const Website = React.lazy(() => import('../components/Career/Website'));
 const SocialMedia = React.lazy(() => import('../components/Career/SocialMedia'));

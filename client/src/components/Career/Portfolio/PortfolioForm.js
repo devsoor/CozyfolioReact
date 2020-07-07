@@ -24,6 +24,8 @@ const PortfolioForm = (props) => {
     const [proj, setProj] = useState('Python')
     // const { id, name, title, portfolioSummary } = props.portfolio;
     const [pfolio, setPfolio] = useState(props.portfolio);
+    const { editMode } = props;
+    console.log("PortfolioForm: editMode = ", editMode)
 
     const handleChange = (e) => {
         setPfolio({...pfolio, [e.target.name]: e.target.value});
@@ -38,6 +40,7 @@ const PortfolioForm = (props) => {
         <Card>
             <CardBody>
                 <Form onSubmit={handleFormSubmit}>
+                    <fieldset disabled={!editMode}>
                     <FormGroup>
                         <Label >Name</Label>
                         <Input type="text" value={pfolio.name || ''} name="name" placeholder="Enter Name.." onChange={handleChange}/>
@@ -61,6 +64,7 @@ const PortfolioForm = (props) => {
                         />
                     </FormGroup>
                     <Button type="submit" size="sm" color="primary">Submit</Button> <Button type="cancel" size="sm" color="danger" onClick={props.onCancelClick}>Cancel</Button>
+                    </fieldset>
                 </Form>
             </CardBody>
         </Card>
