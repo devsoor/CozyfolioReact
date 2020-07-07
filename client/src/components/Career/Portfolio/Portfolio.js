@@ -13,6 +13,8 @@ import {
 import PortfolioForm from './PortfolioForm';
 import PortfolioEdit from './PortfolioEdit';
 import { useAuth } from "../../../Auth/Context";
+import { apiGet, apiCreate, apiUpdate, apiDelete } from '../../../api/ServerAPI';
+import ServerApi from '../../../api/ServerAPI';
 
 const Portfolio = (props) => {
     const { authTokens } = useAuth();
@@ -25,18 +27,25 @@ const Portfolio = (props) => {
     }
     const [portfolios, setPortfolios] = useState([]);
     const [modal, setModal] = useState(false);
+    let api = new ServerApi();
+
+    // useEffect(() => {
+    //     fetch('/portfolio', {
+    //         method: 'GET',
+    //         credentials: 'include',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'Accept': 'application/json',
+    //             'Authorization': 'JWT ' +  authTokens
+    //         }
+    //     }).then(resp => resp.json()).then(data => {
+    //         setPortfolios(data)
+    //     }).catch(error => console.log('error ->', error))
+    // }, []);
 
     useEffect(() => {
-        fetch('/portfolio', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': 'JWT ' +  authTokens
-            },
-            // body:  JSON.stringify()
-        }).then(resp => resp.json()).then(data => {
+        api.get('/portfolio')
+        .then(resp => resp.json()).then(data => {
             setPortfolios(data)
         }).catch(error => console.log('error ->', error))
     }, []);
