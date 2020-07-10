@@ -32,6 +32,7 @@
     "react-dom": "^16.8.6",
     "react-google-maps": "9.4.5",
     "react-grid-layout": "^0.16.6",
+    "react-images-upload": "^1.2.8",
     "react-ladda": "6.0.0",
     "react-quill": "1.3.3",
     "react-router-config": "^5.0.1",

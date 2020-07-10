@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Badge, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Progress } from 'reactstrap';
 
@@ -15,27 +15,29 @@ const defaultProps = {
   mssgs: false,
 };
 
-class DefaultHeaderDropdown extends Component {
+const DefaultHeaderDropdown = (props) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.toggle = this.toggle.bind(this);
-    this.state = {
-      dropdownOpen: false,
-    };
-  }
+  //   this.toggle = this.toggle.bind(this);
+  //   this.state = {
+  //     dropdownOpen: false,
+  //   };
+  // }
 
-  toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen,
-    });
-  }
+  const toggle = () => setDropdownOpen(!dropdownOpen);
+  // toggle = () => {
+  //   this.setState({
+  //     dropdownOpen: !this.state.dropdownOpen,
+  //   });
+  // }
 
-  dropNotif() {
+  const dropNotif = () => {
     const itemsCount = 5;
     return (
-      <Dropdown nav className="d-md-down-none" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <Dropdown nav className="d-md-down-none" isOpen={dropdownOpen} toggle={toggle}>
         <DropdownToggle nav>
           <i className="icon-bell"></i><Badge pill color="danger">{itemsCount}</Badge>
         </DropdownToggle>
@@ -73,9 +75,9 @@ class DefaultHeaderDropdown extends Component {
     );
   }
 
-  dropAccnt() {
+  const dropAccnt = () => {
     return (
-      <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
         <DropdownToggle nav>
           <img src={'../assets/img/avatars/6.jpg'} className="img-avatar" alt="admin@bootstrapmaster.com" />
         </DropdownToggle>
@@ -92,17 +94,17 @@ class DefaultHeaderDropdown extends Component {
           <DropdownItem><i className="fa fa-file"></i> Projects<Badge color="primary">42</Badge></DropdownItem>
           <DropdownItem divider />
           <DropdownItem><i className="fa fa-shield"></i> Lock Account</DropdownItem>
-          <DropdownItem onClick={this.props.onLogout}><i className="fa fa-lock"></i> Logout</DropdownItem>
+          <DropdownItem onClick={props.onLogout}><i className="fa fa-lock"></i> Logout</DropdownItem>
           {/*<DropdownItem><i className="fa fa-lock"></i> Logout</DropdownItem>*/}
         </DropdownMenu>
       </Dropdown>
     );
   }
 
-  dropTasks() {
+  const dropTasks = () => {
     const itemsCount = 15;
     return (
-      <Dropdown nav className="d-md-down-none" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <Dropdown nav className="d-md-down-none" isOpen={dropdownOpen} toggle={toggle}>
         <DropdownToggle nav>
           <i className="icon-list"></i><Badge pill color="warning">{itemsCount}</Badge>
         </DropdownToggle>
@@ -138,10 +140,10 @@ class DefaultHeaderDropdown extends Component {
     );
   }
 
-  dropMssgs() {
+  const dropMssgs = () => {
     const itemsCount = 7;
     return (
-      <Dropdown nav className="d-md-down-none" isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <Dropdown nav className="d-md-down-none" isOpen={dropdownOpen} toggle={toggle}>
         <DropdownToggle nav>
           <i className="icon-envelope-letter"></i><Badge pill color="info">{itemsCount}</Badge>
         </DropdownToggle>
@@ -221,15 +223,13 @@ class DefaultHeaderDropdown extends Component {
     );
   }
 
-  render() {
-    const { notif, accnt, tasks, mssgs } = this.props;
-    return (
-        notif ? this.dropNotif() :
-          accnt ? this.dropAccnt() :
-            tasks ? this.dropTasks() :
-              mssgs ? this.dropMssgs() : null
-    );
-  }
+  const { notif, accnt, tasks, mssgs } = props;
+  return (
+      notif ? dropNotif() :
+        accnt ? dropAccnt() :
+          tasks ? dropTasks() :
+            mssgs ? dropMssgs() : null
+  );
 }
 
 DefaultHeaderDropdown.propTypes = propTypes;

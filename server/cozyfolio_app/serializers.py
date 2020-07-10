@@ -1,29 +1,47 @@
 from django.conf.urls import url, include
 from rest_framework import routers, serializers, viewsets
-from .models import User, Portfolio, Project, Skill, SocialMedia, Job
-
-class UserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User 
-        fields = ('firstName', 'lastName', 'email', 'password', 'address', 'country','state', 'city', 'zipCode', 'title', 'profileHighlight', 'resume','tagLine', 'headshot')
+from django.contrib.auth.models import User
+from .models import User, Portfolio, Project, Member, Skill, SocialMedia, Job, Picture, Video
 
 
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class MemberSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Member
+    fields = ('id', 'name', 'project', 'created_at', 'updated_at')
 
-# Routers provide an easy way of automatically determining the URL conf.
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
+class PictureSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Picture
+    fields = ('id', 'name', 'picfile', 'project', 'created_at', 'updated_at')
 
-urlpatterns = [
-    url(r'^', include(router.urls)),
-]
+class VideoSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Video
+    fields = ('id', 'name', 'videofile', 'project', 'created_at', 'updated_at')
 
+class ProjectSerializer(serializers.ModelSerializer):
+  # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+  # portfolio = serializers.PrimaryKeyRelatedField(queryset=Portfolio.objects.all(), many=True)
+  
+  members = MemberSerializer(many=True, read_only=True)
+  pictures = PictureSerializer(many=True, read_only=True)
+  video = VideoSerializer(many=True, read_only=True)
+
+  class Meta:
+    model = Project
+    fields = ('id', 'name', 'summary', 'techUsed', 'process', 'url', 'members', 'pictures', 'video', 'user', 'created_at', 'updated_at')
 
 class PortfolioSerializer(serializers.ModelSerializer):
+  # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=True)
+  project = ProjectSerializer(many=True, read_only=True)
   class Meta:
     model = Portfolio
-    fields = ('id', 'name', 'title', 'portfolioSummary', 'resume', 'created_at', 'updated_at')
+    fields = ('id', 'name', 'title', 'portfolioSummary', 'resume', 'user', 'projects', 'created_at', 'updated_at')
+
+class UserSerializer(serializers.ModelSerializer):
+  portfolio = serializers.PrimaryKeyRelatedField(many=True, queryset=Portfolio.objects.all())
+  project = serializers.PrimaryKeyRelatedField(many=True, queryset=Project.objects.all())
+
+  class Meta:
+      model = User
+      fields = ['id', 'username', 'email', 'portfolio', 'project']

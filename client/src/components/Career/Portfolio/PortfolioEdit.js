@@ -15,18 +15,8 @@ import {
 import PortfolioForm from './PortfolioForm';
 
 const PortfolioEdit = (props) => {
-    const {portfolios} = props.portfolios;
     const [inEditMode, setInEditMode] = useState(false);
     const [activeTab, setActiveTab] = useState('1')
-    const [proj, setProj] = React.useState('Python')
-
-    const projectNames = [
-        { value: 'Python', label: 'Python/Flask' },
-        { value: 'Java', label: 'Java/Springboot' },
-        { value: 'MERN', label: 'MERN' },
-        { value: 'Ruby', label: 'Ruby on Rails' },
-        { value: 'C#', label: 'C#/.NET' },
-    ];
 
     const toggle = tab => {
         let indx = (tab).toString();
@@ -39,11 +29,9 @@ const PortfolioEdit = (props) => {
 
     const leaveEditMode = () => {
         setInEditMode(false);
+        // props.onCancelClick();
     }
 
-    const handleValueChange = (id, name, value) => {
-        props.onPortfolioChange(id, name, value);
-    }
 
     const handleUpdate = (portfolio) => {
         leaveEditMode();
@@ -66,7 +54,7 @@ const PortfolioEdit = (props) => {
                                 <ListGroup id="list-tab" role="tablist" >
                                     {
                                         props.portfolios.map((pfolio, i) => (
-                                            <Col>
+                                            <Col key={i}>
                                                 <CardHeader key={i}>
                                                     <Row className="row align-items-center">
                                                         <Col sm="8">
@@ -95,7 +83,6 @@ const PortfolioEdit = (props) => {
                                                     <CardBody>                                
                                                         <PortfolioForm
                                                             portfolio={pfolio}
-                                                            onValueChange={handleValueChange}
                                                             onCancelClick={leaveEditMode}
                                                             onFormSubmit={handleUpdate}
                                                             editMode={inEditMode}>

@@ -11,17 +11,15 @@ import {
 } from 'reactstrap';
 import PortfolioForm from './PortfolioForm';
 import PortfolioEdit from './PortfolioEdit';
-import { useAuth } from "../../../Auth/Context";
 import ServerApi from '../../../api/ServerAPI';
 
 const Portfolio = (props) => {
-    const { authTokens } = useAuth();
-
     const defaultPortfolio = {
         id: '',
         name: '',
         title: '',
-        portfolioSummary: ''
+        portfolioSummary: '',
+        project: []
     }
     const [portfolios, setPortfolios] = useState([]);
     const [modal, setModal] = useState(false);
@@ -35,10 +33,6 @@ const Portfolio = (props) => {
     }, []);
 
     const toggle = () => setModal(!modal);
-
-    const handlePortfolioChange = (id, name, value) => {
-        setPortfolios({...portfolios, [name]: value});
-    }
 
     const createPortfolio = (pfolio) => {
         api.create('/portfolio', pfolio)
@@ -77,34 +71,34 @@ const Portfolio = (props) => {
 
     return (
         <div className="animated fadeIn">
-        <Row>
-            <Col>
-                <Card>
-                    <CardHeader>
-                        <Row>
-                            <Col sm="5">
-                                <h3>Portfolios</h3>
-                            </Col>
-                            <Col sm="7" className="d-none d-md-block">
-                                <Button onClick={toggle} className="bg-info float-right">New</Button>
-                                <Modal isOpen={modal} toggle={toggle}>
-                                    <ModalHeader toggle={toggle}>Modal title</ModalHeader>
-                                        <ModalBody>
-                                            <PortfolioForm
-                                                portfolio={defaultPortfolio}
-                                                onFormSubmit={createPortfolio}
-                                                onCancelClick={toggle}
-                                                editMode={true}>
-                                            </PortfolioForm>
-                                        </ModalBody>                        
-                                </Modal>
-                            </Col>
-                        </Row>                
-                    </CardHeader>
-                    <PortfolioEdit portfolios={portfolios} onPortfolioChange={handlePortfolioChange} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio}/>
-                </Card>
-            </Col>
-        </Row>
+            <Row>
+                <Col>
+                    <Card>
+                        <CardHeader>
+                            <Row>
+                                <Col sm="5">
+                                    <h3>Portfolios</h3>
+                                </Col>
+                                <Col sm="7" className="d-none d-md-block">
+                                    <Button onClick={toggle} className="bg-info float-right">New</Button>
+                                    <Modal isOpen={modal} toggle={toggle}>
+                                        <ModalHeader toggle={toggle}>Modal title</ModalHeader>
+                                            <ModalBody>
+                                                <PortfolioForm
+                                                    portfolio={defaultPortfolio}
+                                                    onFormSubmit={createPortfolio}
+                                                    onCancelClick={toggle}
+                                                    editMode={true}>
+                                                </PortfolioForm>
+                                            </ModalBody>                        
+                                    </Modal>
+                                </Col>
+                            </Row>                
+                        </CardHeader>
+                        <PortfolioEdit portfolios={portfolios} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio} onCancelClick={toggle}/>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     )
 }

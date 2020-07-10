@@ -1,153 +1,59 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
+from django.contrib.auth.models import User
 import re
 import bcrypt
 from datetime import date, datetime, timedelta
 from django.utils.timezone import now
 import pprint
 from django.conf import settings
-# Create your models here.
-class UserManager(models.Manager):
-    def register_validator(self, postData):
-        if not postData:
-            return
-        errors = {}
-        NAME_REGEX = re.compile ('[a-zA-Z_]')
-
-        # if NAME_REGEX.match(postData['registerFormFirstName']) == None or len(postData['registerFormFirstName']) < 2:
-        #     errors["registerFormFirstName"] = "First name must be all letters and length atleast 2 characters long"
-
-        # if NAME_REGEX.match(postData['registerFormLastName']) == None or len(postData['registerFormLastName']) < 2:
-        #     errors["registerFormLastName"] = "Last name must be all letters and length atleast 2 characters long"
-
-        if NAME_REGEX.match(postData['username']) == None or len(postData['username']) < 2:
-            errors["username"] = "User name must be all letters and length atleast 2 characters long"
-
-
-        EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['email']) or len(postData['email']) == 0:           
-            errors['email'] = "Invalid email address!"
-
-        # regular email uniqueness check
-        if User.objects.filter(email=postData['email']).exists():
-            errors['usertaken'] = "This user email already exists"
-
-        if len(postData['password1']) < 8:
-            errors['password1'] = "Password must be atleast 8 characters long"
-
-        if len(postData['password2']) < 8:
-            errors['confirmregisterFormConfirmPassword_pw'] = "Confirm Password must be atleast 8 characters long"
-
-        if postData['password1'] != postData['password2']:
-            errors['pw_match'] = "Passwords do not match"
-
-        return errors
-
-    def login_validator(self, postData):
-        if not postData:
-            return
-        errors = {}
-        EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['email']) or len(postData['username']) == 0:           
-            errors['username'] = "Invalid user name!"
-
-        # if not EMAIL_REGEX.match(postData['email']) or len(postData['email']) == 0:           
-        #     errors['email'] = "Invalid email address!"
-
-        current_username = User.objects.filter(email=postData['username'])
-        if len(current_username) == 0:
-                errors['userunknown'] = "This user email does not exist"
-
-        if len(postData['password']) < 8:
-            errors['password'] = "Password must be atleast 8 characters long"
-
-        return errors
-
-    def userProfile_validator(self, postData, filesData):
-        print("userProfile_validator: filesData = ")
-        pprint.pprint(filesData)
-
-        errors = {}
-        if len(filesData) == 0:
-            errors['filesData'] = "No resume or picture uploaded"
-            return errors
-
-        NAME_REGEX = re.compile ('[a-zA-Z_]')
-
-        if NAME_REGEX.match(postData['profileFormFirstName']) == None or len(postData['profileFormFirstName']) < 2:
-            errors["profileFormFirstName"] = "First name must be all letters and length atleast 2 characters long"
-
-        if NAME_REGEX.match(postData['profileFormLastName']) == None or len(postData['profileFormLastName']) < 2:
-            errors["profileFormLastName"] = "Last name must be all letters and length atleast 2 characters long"
-
-        EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-        if not EMAIL_REGEX.match(postData['profileFormEmail']) or len(postData['profileFormEmail']) == 0:           
-            errors['profileFormEmail'] = "Invalid email address!"
-
-        if len(postData['profileFormEmail']) < 8:
-            errors['profileFormEmail'] = "Password must be atleast 8 characters long"
-
-        # if !hasattr(filesData, 'profileFormResume'):
-        #     errors['profileFormResume'] = "Resume file must be uploaded"
-
-        # if !hasattr(filesData, 'profileFormHeadshot'):
-        #     errors['profileFormHeadshot'] = "Your picture must be uploaded"
-
-        return errors
 
 class PdfFile(models.Model):
     title = models.CharField(max_length=100)
     pdf = models.FileField(upload_to='media/')
 
-class User(models.Model):
-    # firstName = models.CharField(max_length=75)
-    # lastName = models.CharField(max_length=75)
-    username = models.CharField(max_length=75, null=True)
-    email = models.CharField(max_length=50)
-    password = models.CharField(max_length=255)
-    address = models.CharField(max_length=100, null=True)
-    country = models.CharField(max_length=100, null=True)
-    state = models.CharField(max_length=10, null=True)
-    city = models.CharField(max_length=100, null=True)
-    zipCode = models.CharField(max_length=10, null=True)
-    title = models.CharField(max_length=100, null=True)
-    profileHighlight = models.TextField(null=True)
-    resume = models.FileField(upload_to='resume/', null=True)
-    tagLine = models.CharField(max_length=150, null=True)
-    headshot = models.ImageField(upload_to='headshot/', null=True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
-    objects = UserManager()
+class Project(models.Model):
+    name = models.CharField(max_length=200)
+    summary = models.TextField(null=True)
+    techUsed = models.TextField(null=True)
+    process = models.TextField(null=True)
+    url = models.CharField(max_length=255, null=True)
+    user = models.ForeignKey(User, related_name = "project", on_delete = models.CASCADE, null = True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Portfolio(models.Model):
     name = models.CharField(max_length=75)
     title = models.CharField(max_length=100, null=True)
     portfolioSummary = models.TextField(null=True)
     resume = models.FileField(upload_to='media/', null=True)
+    projects = models.ManyToManyField(Project, related_name = "portfolios")
+    user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
     created_at = models.DateTimeField(default=now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
-    # user = models.ForeignKey(User, related_name = "portfolio", on_delete = models.CASCADE, null = True)
 
     def __repr__(self):
         return f"Portfolio object: {self.id} {self.name} {self.title}"
-    
-class Project(models.Model):
+
+# Usage: for image in project.images: do something
+class Picture(models.Model):
     name = models.CharField(max_length=75)
-    summary = models.TextField(null=True)
-    techUsed = models.TextField(null=True)
-    team = models.TextField(null=True)
-    process = models.TextField(null=True)
-    url = models.CharField(max_length=255, null=True)
-    # video and slide best field?
-    picImage = models.ImageField(upload_to='media/', null=True)
-    # slides = models.FileField(upload_to='uploads/', null=True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
-    portfolio = models.ManyToManyField(Portfolio, related_name = "project")
-    user = models.ForeignKey(User, related_name = "project", on_delete = models.CASCADE, null = True)
-    
+    picfile = models.ImageField(upload_to='media', null=True)
+    project = models.ForeignKey(Project, related_name="pictures", on_delete = models.CASCADE, null = True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Video(models.Model):
+    name = models.CharField(max_length=500)
+    videofile= models.FileField(upload_to='videos/', null=True, verbose_name="")
+    project = models.OneToOneField(Project, on_delete = models.CASCADE, null = True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Member(models.Model):
+    name = models.CharField(max_length=200)
+    project = models.ForeignKey(Project, related_name="members", on_delete = models.CASCADE, null = True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Skill(models.Model):
     languages = models.TextField(null=True) #using json to 'cast' list into a string
@@ -159,16 +65,16 @@ class Skill(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE, null = True)
     portfolio = models.OneToOneField(Portfolio, on_delete = models.CASCADE, null = True)
     project = models.OneToOneField(Project, on_delete = models.CASCADE, null = True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class SocialMedia(models.Model):
     name = models.CharField(max_length = 100, null=True)
     url = models.CharField(max_length = 255, null=True)
     logo = models.ImageField(upload_to='media/', null=True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
     user = models.ForeignKey(User, related_name = "socialMedia", on_delete = models.CASCADE, null = True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class JobManager(models.Manager):
     def job_validator(self, postData):
@@ -203,6 +109,6 @@ class Job(models.Model):
     offerReject = models.IntegerField(null=True)
     mostPopularPortfolio = models.CharField(max_length=75, null=True)
     numbofCompanyApplied = models.IntegerField(null=True)
-    created_at = models.DateField(default=datetime.now)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(default=now, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
     objects = JobManager()

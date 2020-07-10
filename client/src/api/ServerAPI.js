@@ -22,6 +22,7 @@ class ServerApi {
     }
 
     create(url, obj) {
+        console.log("api.create: obj = ", obj)
         return fetch(url, {
             method: 'POST',
             credentials: 'include',

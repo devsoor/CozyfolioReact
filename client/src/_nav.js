@@ -24,6 +24,11 @@ export default {
       icon: 'icon-grid',
     },
     {
+      name: 'Accomplishments',
+      url: '/career/awards',
+      icon: 'icon-star',
+    },
+    {
       name: 'Resume',
       url: '/career/resume',
       icon: 'icon-book-open',
@@ -37,6 +42,11 @@ export default {
       name: 'Social Media',
       url: '/career/socialmedia',
       icon: 'icon-social-linkedin',
+    },
+    {
+      name: 'Interviews',
+      url: '/career/interview',
+      icon: 'icon-briefcase',
     },
     {
       title: true,
