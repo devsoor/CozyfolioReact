@@ -77,7 +77,11 @@ const Project = (props) => {
                                 </Col>
                             </Row>                
                         </CardHeader>
-                        {/* <ProjctEdit portfolios={portfolios} onClickUpdate={updatePortfolio} onClickDelete={deletePortfolio} onCancelClick={handleCancel}/> */}
+                        {
+                            projects.map((proj, i) =>(
+                                <p>{proj.name}</p>
+                            ))
+                        }
                     </Card>
                 </Col>
             </Row>

@@ -79,11 +79,14 @@ const ProjectNew = (props) => {
     }
 
     const handleFormSubmit = (event) => {
-        event.preventDefault();       
-        pictures[0].forEach(pic => {
-            project.pictures.push(pic);
-        });
-        setProject({...project, pictures})
+        event.preventDefault();     
+        console.log("handleFormSubmit: pictures = ", pictures)  
+        if (pictures.length) {
+            pictures[0].forEach(pic => {
+                project.pictures.push(pic);
+            });
+            setProject({...project, pictures})
+        }
         createProject();
         setToProjectPage(true);
     }
