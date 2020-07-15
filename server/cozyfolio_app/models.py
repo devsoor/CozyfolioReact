@@ -36,7 +36,6 @@ class Portfolio(models.Model):
 
 # Usage: for image in project.images: do something
 class Picture(models.Model):
-    name = models.CharField(max_length=75)
     picfile = models.ImageField(upload_to='media', null=True)
     project = models.ForeignKey(Project, related_name="pictures", on_delete = models.CASCADE, null = True)
     created_at = models.DateTimeField(default=now, editable=False)

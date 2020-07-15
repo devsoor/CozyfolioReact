@@ -9,7 +9,6 @@ class ServerApi {
     }
 
     get(url){ 
-
         return fetch(url, {
             method: 'GET',
             credentials: 'include',
@@ -22,31 +21,47 @@ class ServerApi {
     }
 
     create(url, obj) {
-        console.log("api.create: obj = ", obj)
+        const formData = new FormData();
+        for (const name in obj) {
+            if (name == 'files') {
+                obj[name].forEach((file, i) => {
+                    formData.append(`uploadfile${i}`, file)
+                })
+            } else {
+                formData.append(name, obj[name])
+            }
+        }
         return fetch(url, {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
                 'Authorization': 'JWT ' +  this.authTokens
             },
-            body:  JSON.stringify(obj)
+            body: formData
         })
     }
 
     update(url, id, obj) {
+        const formData = new FormData();
+        for (const name in obj) {
+            if (name == 'files') {
+                obj[name].forEach((file, i) => {
+                    formData.append(`uploadfile${i}`, file)
+                })
+            } else {
+                formData.append(name, obj[name])
+            }
+        }
         return fetch(url + id, {
             method: 'PUT',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
                 'Authorization': 'JWT ' +  this.authTokens
             },
-            body:  JSON.stringify(obj)
+            body: formData
         })
     }
+
     delete (url, id) {
         return fetch(url + id, {
             method: 'DELETE',

@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom';
 import ImageUploader from "react-images-upload";
-import { Responsive, WidthProvider } from 'react-grid-layout';
-import { getStyle } from '@coreui/coreui-pro/dist/js/coreui-utilities.js'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
-import '../../../common//Draggable/Draggable.css'
-import defaultLayouts from '../../../common//Draggable/_layouts';
 import {
     Button,
     Card,
@@ -22,14 +16,6 @@ import {
   } from 'reactstrap';
 import ServerApi from '../../../api/ServerAPI';
 
-const breakPoints = {};
-breakPoints.xl = parseInt(getStyle('--breakpoint-xl'), 10);
-breakPoints.lg = parseInt(getStyle('--breakpoint-lg'), 10);
-breakPoints.md = parseInt(getStyle('--breakpoint-md'), 10);
-breakPoints.sm = parseInt(getStyle('--breakpoint-sm'), 10);
-breakPoints.xs = parseInt(getStyle('--breakpoint-xs'), 10);
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const ProjectNew = (props) => {
     const defaultProject = {
@@ -37,27 +23,17 @@ const ProjectNew = (props) => {
         summary: '',
         techUsed: '',
         members: [],
-        pictures: [],
+        files: [],
         video: '',
         process: '',
         url: '',
     }
     const [project, setProject] = useState(defaultProject);
     const [teamMember, setTeamMember] = useState();
-    const [pictures, setPictures] = useState([]);
+    const [files, setFiles] = useState([]);
     const [toProjectPage, setToProjectPage] = useState(false);
-    const [layouts, setLayouts] = useState(JSON.parse(localStorage.getItem('CoreUI-React-Draggable-Layouts') || JSON.stringify(defaultLayouts)));
 
     let api = new ServerApi();
-
-    const resetLayout = () => {
-        setLayouts(JSON.parse(JSON.stringify(defaultLayouts)));
-    }
-    
-    const onLayoutChange= (layout, layouts) => {
-        localStorage.setItem('Cozyfolio-React-Draggable-Layouts', JSON.stringify(layouts))
-        setLayouts(layouts);
-    }
 
     const handleChange = (e) => {
         setProject({...project, [e.target.name]: e.target.value});
@@ -80,12 +56,12 @@ const ProjectNew = (props) => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();     
-        console.log("handleFormSubmit: pictures = ", pictures)  
-        if (pictures.length) {
-            pictures[0].forEach(pic => {
-                project.pictures.push(pic);
+        console.log("handleFormSubmit: files = ", files)  
+        if (files.length) {
+            files[0].forEach(pic => {
+                project.files.push(pic);
             });
-            setProject({...project, pictures})
+            setProject({...project, files})
         }
         createProject();
         setToProjectPage(true);
@@ -99,7 +75,7 @@ const ProjectNew = (props) => {
 
     const onDrop = picture => {
         console.log("onDrop: picture = ", picture)
-        setPictures([...pictures, picture]);
+        setFiles([...files, picture]);
     };
 
     const handleCancel = (e) => {

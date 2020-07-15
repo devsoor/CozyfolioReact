@@ -10,6 +10,8 @@ import {
   ModalHeader,
   ModalBody
 } from 'reactstrap';
+
+import ProjectEdit from './ProjectEdit';
 import ServerApi from '../../../api/ServerAPI';
 
 const Project = (props) => {
@@ -30,11 +32,11 @@ const Project = (props) => {
         api.update('/project/', newProject.id, newProject)
         .then(resp => resp.json())
         .then(newProject => {
-            const newProjects = projects.map(folio => {
-                if (folio.id == newProject.id) {
+            const newProjects = projects.map(proj => {
+                if (proj.id == newProject.id) {
                     return Object.assign({}, newProject)
                 } else {
-                    return folio;
+                    return proj;
                 }
             });
             setProjects(newProjects);
@@ -77,11 +79,7 @@ const Project = (props) => {
                                 </Col>
                             </Row>                
                         </CardHeader>
-                        {
-                            projects.map((proj, i) =>(
-                                <p>{proj.name}</p>
-                            ))
-                        }
+                        <ProjectEdit projects={projects} onClickUpdate={updateProject} onClickDelete={deleteProject} onCancelClick={handleCancel}/>
                     </Card>
                 </Col>
             </Row>

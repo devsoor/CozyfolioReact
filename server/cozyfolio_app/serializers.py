@@ -12,7 +12,7 @@ class MemberSerializer(serializers.ModelSerializer):
 class PictureSerializer(serializers.ModelSerializer):
   class Meta:
     model = Picture
-    fields = ('id', 'name', 'picfile', 'project', 'created_at', 'updated_at')
+    fields = ('id', 'picfile', 'project', 'created_at', 'updated_at')
 
 class VideoSerializer(serializers.ModelSerializer):
   class Meta:

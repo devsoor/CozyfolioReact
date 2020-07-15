@@ -5,7 +5,7 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
 from .permissions import IsOwnerOrReadOnly
-from .models import User, Portfolio, Project, Member, Skill, SocialMedia, Job
+from .models import User, Portfolio, Project, Member, Picture, Skill, SocialMedia, Job
 from .serializers import UserSerializer, PortfolioSerializer, ProjectSerializer, MemberSerializer
 from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
@@ -20,6 +20,7 @@ import json
 import ast
 import urllib.parse
 import os
+import re
 from datetime import datetime
 
 def index(request):
@@ -67,18 +68,11 @@ class ProjectList(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def perform_create(self, serializer):
-        print ("ProjectList: perform_create, serializer.data = ", serializer.validated_data)
-        print ("self.request: ", self.request)
         data = self.request.data
-        for item in data.items():
-            print ("self.request.data: item = ", item)
         name = data['name']
         summary = data['summary']
         techUsed = data['techUsed']
         process = data['process']
-        pictures_data = data['pictures']
-        for pic in pictures_data:
-            print ("pictures_data: pic = ", pic)
         url = data['url']
         members_data = data['members']
         user=self.request.user
@@ -86,6 +80,10 @@ class ProjectList(generics.ListCreateAPIView):
         project = Project.objects.create(name=name, summary=summary, techUsed=techUsed, process=process, url=url, user=user)
         for member in members_data:
             Member.objects.create(project=project, name=member)
+        for item in data.items():
+            if len(re.findall("uploadfile", item[0])):
+                print("found uploaded file: ", item[1])
+                Picture.objects.create(project=project, picfile=item[1])
         return project
 
 # Used for GET, PUT, and DELETE methods
