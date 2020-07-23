@@ -74,11 +74,13 @@ class ProjectList(generics.ListCreateAPIView):
         techUsed = data['techUsed']
         process = data['process']
         url = data['url']
-        members_data = data['members']
+        members_data = data['members'].split(",")
+        print("members_data: ", members_data)
         user=self.request.user
         print ("self.request.user: ", user)
         project = Project.objects.create(name=name, summary=summary, techUsed=techUsed, process=process, url=url, user=user)
         for member in members_data:
+            print("member: ", member)
             Member.objects.create(project=project, name=member)
         for item in data.items():
             if len(re.findall("uploadfile", item[0])):

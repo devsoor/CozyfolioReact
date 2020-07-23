@@ -23,6 +23,7 @@ const Project = (props) => {
     useEffect(() => {
       api.get('/project')
       .then(resp => resp.json()).then(data => {
+          console.log("api GET: data = ", data)
         setProjects(data)
       }).catch(error => console.log('Error getting projects ->', error))
     }, []);

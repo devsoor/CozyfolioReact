@@ -51,30 +51,30 @@ const PortfolioForm = (props) => {
             <CardBody>
                 <Form onSubmit={handleFormSubmit}>
                     <fieldset disabled={!editMode}>
-                    <FormGroup>
-                        <Label >Name</Label>
-                        <Input type="text" value={pfolio.name || ''} name="name" placeholder="Enter Name.." onChange={handleChange}/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label >Job Title</Label>
-                        <Input type="text" value={pfolio.title || ''} name="title" placeholder="Enter Job Title.." onChange={handleChange}/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label>Summary</Label>
-                        <Input type="text" value={pfolio.portfolioSummary || ''} name="portfolioSummary" placeholder="Enter Summary.." onChange={handleChange}/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label >Projects</Label>
-                        <Select
-                            name="project"
-                            value={proj}
-                            options={projectNames}
-                            onChange={saveProjectList}
-                            placeholder="Select project name"
-                            multi
-                        />
-                    </FormGroup>
-                    <Button type="submit" size="sm" color="primary">Submit</Button> <Button type="cancel" size="sm" color="danger" onClick={handleCancel}>Cancel</Button>
+                        <FormGroup>
+                            <Label >Name</Label>
+                            <Input type="text" value={pfolio.name || ''} name="name" placeholder="Enter Name.." onChange={handleChange}/>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label >Job Title</Label>
+                            <Input type="text" value={pfolio.title || ''} name="title" placeholder="Enter Job Title.." onChange={handleChange}/>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label>Summary</Label>
+                            <Input type="text" value={pfolio.portfolioSummary || ''} name="portfolioSummary" placeholder="Enter Summary.." onChange={handleChange}/>
+                        </FormGroup>
+                        <FormGroup>
+                            <Label >Projects</Label>
+                            <Select
+                                name="project"
+                                value={proj}
+                                options={projectNames}
+                                onChange={saveProjectList}
+                                placeholder="Select project name"
+                                multi
+                            />
+                        </FormGroup>
+                        <Button type="submit" size="sm" color="primary">Submit</Button> <Button type="cancel" size="sm" color="danger" onClick={handleCancel}>Cancel</Button>
                     </fieldset>
                 </Form>
             </CardBody>

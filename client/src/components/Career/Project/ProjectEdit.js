@@ -31,7 +31,6 @@ const ProjectEdit = (props) => {
         setInEditMode(false);
     }
 
-
     const handleUpdate = (project) => {
         leaveEditMode();
         props.onClickUpdate(project);
@@ -74,20 +73,13 @@ const ProjectEdit = (props) => {
                                 <TabContent activeTab={activeTab}>
                                     {
                                         props.projects.map((proj, i) => (
-                                            <TabPane key={i} tabId={i.toString()}>
-                                            <Card>
-                                                <CardHeader>
-                                                    {proj.name}
-                                                </CardHeader>
-                                                    <CardBody>                                
-                                                        <ProjectForm
-                                                            project={proj}
-                                                            onCancelClick={leaveEditMode}
-                                                            onFormSubmit={handleUpdate}
-                                                            editMode={inEditMode}>
-                                                        </ProjectForm>
-                                                    </CardBody>
-                                            </Card>
+                                            <TabPane key={i} tabId={i.toString()}>                              
+                                                    <ProjectForm
+                                                        project={proj}
+                                                        onCancelClick={leaveEditMode}
+                                                        onFormSubmit={handleUpdate}
+                                                        editMode={inEditMode}>
+                                                    </ProjectForm>
                                         </TabPane>
                                         ))
                                     }
