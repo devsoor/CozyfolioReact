@@ -69,6 +69,7 @@ class ProjectList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         data = self.request.data
+        print("ProjectList: perform_create: data = ", data)
         name = data['name']
         summary = data['summary']
         techUsed = data['techUsed']
@@ -82,10 +83,14 @@ class ProjectList(generics.ListCreateAPIView):
         for member in members_data:
             print("member: ", member)
             Member.objects.create(project=project, name=member)
-        for item in data.items():
-            if len(re.findall("uploadfile", item[0])):
-                print("found uploaded file: ", item[1])
-                Picture.objects.create(project=project, picfile=item[1])
+        pictures_data = data['uploadedPics'].split(",")
+        for pic in pictures_data:
+            print ("found pic: ", pic)
+            Picture.objects.create(project=project, picfile=pic)
+        # for item in data.items():
+        #     if len(re.findall("uploadfile", item)):
+        #         print("found uploaded file: ", item)
+        #         Picture.objects.create(project=project, picfile=item[1])
         return project
 
 # Used for GET, PUT, and DELETE methods

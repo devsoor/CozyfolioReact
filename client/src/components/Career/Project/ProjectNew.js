@@ -15,22 +15,30 @@ import {
     ListGroupItem,
     Row
   } from 'reactstrap';
+
+import ProjectForm from './ProjectForm';
 import ServerApi from '../../../api/ServerAPI';
+import technologies from './technologies';
 
 const ProjectNew = (props) => {
     const defaultProject = {
         name: '',
         summary: '',
-        techUsed: '',
-        members: [],
-        files: [],
+        techUsed: [],
+        members: [{
+            name: ''
+        }],
+        pictures: [{
+            picfile: ''
+        }],
         video: '',
         process: '',
-        url: '',
+        giturl: '',
+        url: ''
     }
-    const [project, setProject] = useState(defaultProject);
+    const [project, setProject] = useState();
     const [teamMember, setTeamMember] = useState();
-    const [files, setFiles] = useState([]);
+    const [pictures, setPictures] = useState([]);
     const [toProjectPage, setToProjectPage] = useState(false);
 
     let api = new ServerApi();
@@ -39,42 +47,42 @@ const ProjectNew = (props) => {
         setProject({...project, [e.target.name]: e.target.value});
     }
 
-    const createProject = () => {
+    const createProject = (project) => {
+        console.log("ProjectNew: createProject: project = ", project)  
         api.create('/project', project)
         .then(resp => resp.json()).then(data => {
             console.log("created project: data  = ", data)
         }).catch(error => console.log('Error creating project ->', error))
     }
 
-    const handleFormSubmit = (event) => {
-        event.preventDefault();     
-        console.log("handleFormSubmit: files = ", files)  
-        if (files.length) {
-            files[0].forEach(pic => {
-                project.files.push(pic);
-            });
-            setProject({...project, files})
-        }
-        createProject();
+    const handleFormSubmit = (project) => {
+        console.log("ProjectNew: handleFormSubmit: project = ", project)  
+        // if (pictures.length) {
+        //     pictures[0].forEach(pic => {
+        //         project.pictures.push(pic);
+        //     });
+        //     setProject({...project, pictures})
+        // }
+        createProject(project);
         setToProjectPage(true);
     }
 
     const addTeamMember = () => {
         project.members.push(teamMember);
         setTeamMember('');
-        console.log("addTeamMember: files = ", files)
+        console.log("addTeamMember: pictures = ", pictures)
         
     }
 
     const onDrop = picture => {
         console.log("onDrop: picture = ", picture)
-        setFiles([...files, picture]);
-        console.log("onDrop: files = ", files)
+        setPictures([...pictures, picture]);
+        console.log("onDrop: pictures = ", pictures)
     };
     
     const deletePicture = (e, picfile) => {
-        const f = files[0].filter(pic => pic.name != picfile);
-        setFiles([f]);
+        const f = pictures[0].filter(pic => pic.name != picfile);
+        setPictures([f]);
     }
 
     const handleCancel = (e) => {
@@ -89,7 +97,13 @@ const ProjectNew = (props) => {
         <div className="animated fadeIn">
             <Card>
                 <CardBody>
-                    <Form onSubmit={handleFormSubmit}>
+                    <ProjectForm
+                        project={''}
+                        onCancelClick={handleCancel}
+                        onFormSubmit={handleFormSubmit}
+                        editMode={true}>
+                    </ProjectForm>
+                    {/* <Form onSubmit={handleFormSubmit}>
                         <FormGroup>
                             <h4>Name</h4>
                             <Input type="text" value={project.name || ''} name="name" placeholder="Enter Name.." onChange={handleChange}/>
@@ -136,7 +150,7 @@ const ProjectNew = (props) => {
                                     />
                                                         <ListGroup>
                         {
-                            files[0] && files[0].map((pic, i) => (
+                            pictures[0] && pictures[0].map((pic, i) => (
                                 <Col key={i}>
                                     <CardHeader>
                                         <Row className="row align-items-center">
@@ -162,10 +176,10 @@ const ProjectNew = (props) => {
                         </FormGroup>
                         <FormGroup>
                             <h4>Github</h4>
-                            <Input type="text" value={project.url || ''} name="url" rows="5" placeholder="Enter Github URL" onChange={handleChange}/>
+                            <Input type="text" value={project.giturl || ''} name="url" rows="5" placeholder="Enter Github URL" onChange={handleChange}/>
                         </FormGroup>
                         <Button type="submit" color="primary">Submit</Button> <Button type="cancel" color="danger" onClick={handleCancel}>Cancel</Button>
-                    </Form>
+                    </Form> */}
                 </CardBody>
             </Card>
         </div>

@@ -17,6 +17,7 @@ class Project(models.Model):
     techUsed = models.TextField(null=True)
     process = models.TextField(null=True)
     url = models.CharField(max_length=255, null=True)
+    giturl = models.CharField(max_length=255, null=True)
     user = models.ForeignKey(User, related_name = "project", on_delete = models.CASCADE, null = True)
     created_at = models.DateTimeField(default=now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)

@@ -25,7 +25,14 @@ const ProjectForm = (props) => {
     console.log("ProjectForm: project = ", project)
     const { editMode } = props;
     const [teamMember, setTeamMember] = useState();
-    const [files, setFiles] = useState([]);
+    const [members, setMembers] = useState([]);
+    const [pictures, setPictures] = useState([]);
+    !members.length && project.members && project.members.map(member => {
+        members.push(member.name);
+    })
+    !pictures.length && project.pictures && project.pictures.map(pic => {
+        pictures.push(pic.picfile);
+    })
     
     const saveProjectList = (value) => {
         setProject(value);
@@ -33,18 +40,18 @@ const ProjectForm = (props) => {
     
     const handleChange = (e) => {
         setProject({...project, [e.target.name]: e.target.value});
-        console.log("handleChange: project = ", project)
     }
     
     const handleFormSubmit = (event) => {
-        event.preventDefault();        
+        event.preventDefault();    
+        console.log("ProjectForm: handleFormSubmit: project = ", project)   
         props.onFormSubmit(project);
     }
     
     const addTeamMember = () => {
-        project.members.push(teamMember);
-        console.log("addTeamMember: project = ", project)
+        members.push(teamMember);
         setTeamMember('');
+        setProject({...project, members})
     }
     
     const handleUpdateMember = (e) => {
@@ -55,16 +62,17 @@ const ProjectForm = (props) => {
             }
         })
         setProject({...project, members});
-
+        
     }
+    
+    const onDrop = pics => {
+        console.log("onDrop: pics = ", pics)
+        pics.map(file => {
+            // pictures.push({'picfile':file.name});
+            pictures.push(file.name)
+        });
+        setProject({...project, pictures});
 
-    const addPictures = (files) => {
-        setFiles(files);
-    }
-
-    const onDrop = picture => {
-        console.log("onDrop: picture = ", picture)
-        setFiles([...files, picture]);
     };
 
     const deleteTeamMember = (e, name) => {
@@ -110,17 +118,17 @@ const ProjectForm = (props) => {
                         </Row>
                     </CardBody>
                     {
-                        project.members && project.members.map((member, i) => (
+                        members && members.map((member, i) => (
                             <Col key={i}>
                                 <CardHeader>
                                     <Row className="row align-items-center p-0">
                                         <Col sm="11">
                                             <InputGroup key={i}>
-                                                <Input type="text" id={member.id} name={member.name} value={member.name} onChange={handleUpdateMember}/>
+                                                <Input type="text" name={member} value={member} onChange={handleUpdateMember}/>
                                             </InputGroup>
                                         </Col>
                                         <Col sm="1">
-                                            <Button onClick={e=>deleteTeamMember(e, member.name)} className="bg-danger"><i className="fa fa-trash"></i></Button>
+                                            <Button onClick={e=>deleteTeamMember(e, member)} className="bg-danger"><i className="fa fa-trash"></i></Button>
                                         </Col>
                                     </Row>
                                 </CardHeader>
@@ -139,15 +147,15 @@ const ProjectForm = (props) => {
                     />
                     <ListGroup>
                         {
-                            project.pictures && project.pictures.map((pic, i) => (
+                            pictures && pictures.map((pic, i) => (
                                 <Col key={i}>
                                     <CardHeader>
                                         <Row className="row align-items-center">
                                             <Col sm="11">
-                                                <ListGroupItem key={i}>{pic.picfile}</ListGroupItem>
+                                                <ListGroupItem key={i}>{pic}</ListGroupItem>
                                             </Col>
                                             <Col sm="1">
-                                                <Button onClick={e=>deletePicture(e, pic.picfile)} className="bg-danger"><i className="fa fa-trash"></i></Button>
+                                                <Button onClick={e=>deletePicture(e, pic)} className="bg-danger"><i className="fa fa-trash"></i></Button>
                                             </Col>
                                         </Row>
                                     </CardHeader>

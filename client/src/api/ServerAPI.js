@@ -21,13 +21,20 @@ class ServerApi {
     }
 
     create(url, obj) {
+        console.log("ServerAPI, create: obj = ", obj)
         const formData = new FormData();
         for (const name in obj) {
-            if (name == 'files') {
+            if (name == 'pictures') {
+                console.log("ServerAPI: found name = pictures", name)
+                const uploadedFiles = [];
                 obj[name].forEach((file, i) => {
-                    formData.append(`uploadfile${i}`, file)
+                    uploadedFiles.push(file)
+                    console.log("uploadedFiles = ", uploadedFiles)
+                    // formData.append(`uploadfile${i}`, file.picfile)
                 })
+                formData.append('uploadedPics', uploadedFiles)
             } else {
+                console.log("ServerAPI: OTHERWISE found name =", name)
                 formData.append(name, obj[name])
             }
         }
