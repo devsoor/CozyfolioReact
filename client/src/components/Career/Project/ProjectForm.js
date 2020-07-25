@@ -107,62 +107,66 @@ const ProjectForm = (props) => {
                 </FormGroup>
                 <FormGroup>
                     <h4>Team members</h4>
-                    <CardBody>
-                        <Row>
-                            <Col sm="11" >
+                    {/* <Card> */}
+                        <CardBody>
+                        <Row className="d-flex">
+                            <Col>
                                 <Input type="text" value={teamMember || ''} name="teamMember" placeholder="Enter Name.." onChange={(e)=>{setTeamMember(e.target.value)}}/>
                             </Col>
-                            <Col sm="1">
+                            <Col>
                                 <Button onClick={addTeamMember} color="primary">Add</Button>
                             </Col>
                         </Row>
-                    </CardBody>
+                        </CardBody>
+                    {/* </Card> */}
                     {
                         members && members.map((member, i) => (
                             <Col key={i}>
-                                <CardHeader>
-                                    <Row className="row align-items-center p-0">
-                                        <Col sm="11">
-                                            <InputGroup key={i}>
+                                    <Row className="d-flex row align-items-center p-0">
+                                        <Col  sm="10">
+                                            <InputGroup className="p-2" key={i}>
                                                 <Input type="text" name={member} value={member} onChange={handleUpdateMember}/>
                                             </InputGroup>
                                         </Col>
-                                        <Col sm="1">
+                                        <Col  sm="2">
                                             <Button onClick={e=>deleteTeamMember(e, member)} className="bg-danger"><i className="fa fa-trash"></i></Button>
                                         </Col>
                                     </Row>
-                                </CardHeader>
                             </Col>
                             ))
                     }
                 </FormGroup>
                 <FormGroup>
                     <h4>Pictures</h4>
-                    <ImageUploader
-                        {...props}
-                        withIcon={true}
-                        onChange={onDrop}
-                        imgExtension={[".jpg", ".gif", ".png", ".gif"]}
-                        maxFileSize={5242880}
-                    />
-                    <ListGroup>
-                        {
-                            pictures && pictures.map((pic, i) => (
-                                <Col key={i}>
-                                    <CardHeader>
-                                        <Row className="row align-items-center">
-                                            <Col sm="11">
-                                                <ListGroupItem key={i}>{pic}</ListGroupItem>
-                                            </Col>
-                                            <Col sm="1">
-                                                <Button onClick={e=>deletePicture(e, pic)} className="bg-danger"><i className="fa fa-trash"></i></Button>
-                                            </Col>
-                                        </Row>
-                                    </CardHeader>
-                                </Col>
-                            ))
-                        }
-                    </ListGroup>
+                    <Row>
+                        <Col md="4" sm="12">
+                            <ImageUploader
+                                {...props}
+                                withIcon={true}
+                                onChange={onDrop}
+                                imgExtension={[".jpg", ".gif", ".png", ".gif"]}
+                                maxFileSize={5242880}
+                            />
+                        </Col>
+                        <Col md="8" sm="12">
+                            <ListGroup>
+                                {
+                                    pictures && pictures.map((pic, i) => (
+                                        <Col key={i}>
+                                                <Row className="p-2" >
+                                                    <Col sm="10">
+                                                        <ListGroupItem key={i}>{pic}</ListGroupItem>
+                                                    </Col>
+                                                    <Col sm="2">
+                                                        <Button onClick={e=>deletePicture(e, pic)} className="bg-danger"><i className="fa fa-trash"></i></Button>
+                                                    </Col>
+                                                </Row>
+                                        </Col>
+                                    ))
+                                }
+                            </ListGroup>
+                        </Col>
+                    </Row>
                 </FormGroup>
                 <FormGroup>
                     <h4>Process</h4>
