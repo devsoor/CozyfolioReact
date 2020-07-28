@@ -30,6 +30,7 @@ const Project = (props) => {
 
       
     const updateProject = (newProject) => {
+        console.log("Project: updateProject: newProject = ", newProject)
         api.update('/project/', newProject.id, newProject)
         .then(resp => resp.json())
         .then(newProject => {

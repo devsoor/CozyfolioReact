@@ -32,6 +32,7 @@ const ProjectEdit = (props) => {
     }
 
     const handleUpdate = (project) => {
+        console.log("ProjectEdit: handleUpdate: project = project")
         leaveEditMode();
         props.onClickUpdate(project);
     }

@@ -17,8 +17,6 @@ import {
 import Select from 'react-select'
 import 'react-select/dist/react-select.min.css';
 import ImageUploader from "react-images-upload";
-// import MemberForm from './MemberForm';
-// import PictureForm from './PictureForm';
 
 const ProjectForm = (props) => {
     const [project, setProject] = useState({...props.project});
@@ -28,15 +26,13 @@ const ProjectForm = (props) => {
     const [members, setMembers] = useState([]);
     const [pictures, setPictures] = useState([]);
     !members.length && project.members && project.members.map(member => {
+        console.log("oject.members.map: member = ", member)
         members.push(member.name);
     })
+    console.log("created memebers array = ", members)
     !pictures.length && project.pictures && project.pictures.map(pic => {
         pictures.push(pic.picfile);
     })
-    
-    const saveProjectList = (value) => {
-        setProject(value);
-    }
     
     const handleChange = (e) => {
         setProject({...project, [e.target.name]: e.target.value});
@@ -55,12 +51,12 @@ const ProjectForm = (props) => {
     }
     
     const handleUpdateMember = (e) => {
-        const members = project.members;
-        members.map(member => {
-            if (member.name == e.target.name) {
-                member.name = e.target.value;
+        members.map((member, i) => {
+            if (member == e.target.name) {
+                members[i] = e.target.value;
             }
         })
+        setMembers(members);
         setProject({...project, members});
         
     }
@@ -76,7 +72,9 @@ const ProjectForm = (props) => {
     };
 
     const deleteTeamMember = (e, name) => {
-        const members = project.members.filter(member => member.name != name);
+        const newMembers = members.filter(member => member != name);
+        setMembers(newMembers);
+
         setProject({...project, members});
     }
     

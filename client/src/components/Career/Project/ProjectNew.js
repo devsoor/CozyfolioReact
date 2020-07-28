@@ -40,7 +40,6 @@ const ProjectNew = (props) => {
             <Card>
                 <CardBody>
                     <ProjectForm
-                        project={''}
                         onCancelClick={handleCancel}
                         onFormSubmit={handleFormSubmit}
                         editMode={true}>
